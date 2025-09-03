@@ -186,17 +186,14 @@
 </head>
 <body class="antialiased">
 
-    <!-- Tela de Carregamento -->
     <div id="preloader">
         <div id="loader-text">LESTE</div>
         <div id="loader-subtext">CALIBRANDO SISTEMAS...</div>
     </div>
     
-    <!-- Fundo Dinâmico -->
     <canvas id="background-canvas"></canvas>
 
     <div class="min-h-screen flex flex-col lg:flex-row relative z-10">
-        <!-- Navegação Lateral -->
         <nav class="bg-black/30 backdrop-blur-sm border-r border-white/10 p-4 lg:w-64 flex flex-col">
             <div class="flex items-center justify-center mb-12">
                 <img src="https://i.imgur.com/9Go4zCY.png" alt="Logo" class="h-24">
@@ -214,10 +211,8 @@
             </div>
         </nav>
 
-        <!-- Conteúdo Principal -->
         <main class="flex-1 p-4 sm:p-6 lg:p-8">
             
-            <!-- Página Home -->
             <div id="home" class="page">
                 <div class="text-center flex flex-col justify-center items-center h-full">
                      <div class="premium-card p-10 rounded-2xl reveal w-full max-w-4xl">
@@ -225,7 +220,6 @@
                          <p class="mt-4 text-xl text-gray-300">Acelere seus sonhos. Performance e Estilo no limite.</p>
                      </div>
                      <div class="mt-12 grid md:grid-cols-3 gap-8 w-full max-w-6xl">
-                         <!-- Card 1: Veículos Proibidos -->
                          <div class="premium-card p-6 rounded-2xl reveal" style="transition-delay: 200ms;">
                              <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500/20 mx-auto mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-red-400"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" /></svg>
@@ -233,7 +227,6 @@
                              <h3 class="text-xl font-bold mb-2 text-red-400">Veículos Restritos</h3>
                              <p class="text-gray-400 text-sm">Proibido fazer alterações em veículos da prefeitura, como viaturas, veículos de mecânica e OAB.</p>
                          </div>
-                         <!-- Card 2: Regras de Preço -->
                          <div class="premium-card p-6 rounded-2xl reveal" style="transition-delay: 350ms;">
                              <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-500/20 mx-auto mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-yellow-400"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
@@ -241,7 +234,6 @@
                              <h3 class="text-xl font-bold mb-2 text-yellow-400">Valores da Tabela</h3>
                              <p class="text-gray-400 text-sm">É proibido cobrar valores acima ou abaixo da tabela. Infrações podem resultar em wipe ou banimento.</p>
                          </div>
-                         <!-- Card 3: Dúvidas e Contato -->
                          <div class="premium-card p-6 rounded-2xl reveal" style="transition-delay: 500ms;">
                              <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/20 mx-auto mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-green-400"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" /></svg>
@@ -253,11 +245,9 @@
                 </div>
             </div>
             
-            <!-- Página Aulas -->
             <div id="aulas" class="page hidden">
                 <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Central de Treinamento</h1>
                 <div class="space-y-6 max-w-4xl mx-auto">
-                    <!-- Aula 1: Remap -->
                     <div class="premium-card rounded-2xl reveal">
                         <div class="accordion-header p-6 cursor-pointer flex justify-between items-center">
                             <h2 class="text-2xl font-bold">Aula 1: A Arte do Remap</h2>
@@ -274,46 +264,43 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Aula 2: Avaliação -->
                     <div class="premium-card rounded-2xl reveal">
                         <div class="accordion-header p-6 cursor-pointer flex justify-between items-center">
                             <h2 class="text-2xl font-bold">Aula 2: Avaliação de Veículos</h2>
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
                         </div>
                         <div class="accordion-content px-6">
-                             <div class="pb-6 text-gray-300 space-y-3">
-                                 <p>Avaliar um veículo é entender a necessidade do cliente. Faça as perguntas certas:</p>
-                                 <ul class="list-disc list-inside pl-4 space-y-2">
-                                     <li>"Você sente o carro lento na arrancada ou na velocidade final?" - <strong class="text-white">Sugestão: Motor, Turbo, Transmissão.</strong></li>
-                                     <li>"O carro está instável nas curvas?" - <strong class="text-white">Sugestão: Suspensão, Aderência.</strong></li>
-                                     <li>"Ele demora para frear?" - <strong class="text-white">Sugestão: Freios.</strong></li>
-                                 </ul>
-                                 <p class="pt-2"><strong class="text-yellow-400">Ponto de Atenção:</strong> A <strong class="text-white">Blindagem</strong> adiciona muito peso ao veículo. Um carro blindado SEMPRE precisará de melhorias no motor e freios para compensar e manter um bom desempenho.</p>
+                            <div class="pb-6 text-gray-300 space-y-3">
+                                <p>Avaliar um veículo é entender a necessidade do cliente. Faça as perguntas certas:</p>
+                                <ul class="list-disc list-inside pl-4 space-y-2">
+                                    <li>"Você sente o carro lento na arrancada ou na velocidade final?" - <strong class="text-white">Sugestão: Motor, Turbo, Transmissão.</strong></li>
+                                    <li>"O carro está instável nas curvas?" - <strong class="text-white">Sugestão: Suspensão, Aderência.</strong></li>
+                                    <li>"Ele demora para frear?" - <strong class="text-white">Sugestão: Freios.</strong></li>
+                                </ul>
+                                <p class="pt-2"><strong class="text-yellow-400">Ponto de Atenção:</strong> A <strong class="text-white">Blindagem</strong> adiciona muito peso ao veículo. Um carro blindado SEMPRE precisará de melhorias no motor e freios para compensar e manter um bom desempenho.</p>
                             </div>
                         </div>
                     </div>
-                    <!-- Aula 3: Conduta -->
                     <div class="premium-card rounded-2xl reveal">
                         <div class="accordion-header p-6 cursor-pointer flex justify-between items-center">
                             <h2 class="text-2xl font-bold">Aula 3: Código de Conduta</h2>
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
                         </div>
                         <div class="accordion-content px-6">
-                             <div class="pb-6 text-gray-300 space-y-3">
-                                 <p>Somos a elite. Nosso comportamento reflete a qualidade do nosso serviço. Regras são inegociáveis:</p>
-                                 <ul class="list-disc list-inside pl-4 space-y-2">
-                                     <li><strong class="text-white">Atendimento ao Cliente:</strong> Seja sempre cordial, paciente e educativo. Explique os serviços. Um cliente satisfeito sempre volta.</li>
-                                     <li><strong class="text-white">Ambiente de Trabalho:</strong> Sem "zaralho" ou brincadeiras que possam danificar veículos ou atrapalhar o trabalho. Foco e profissionalismo.</li>
-                                     <li><strong class="text-red-500">Uso do Uniforme:</strong> O uniforme é para ser usado APENAS em serviço, com ponto batido. Andar pela cidade uniformizado sem estar trabalhando é passível de punição.</li>
-                                     <li><strong class="text-red-500">Abuso de Poderes:</strong> Usar comandos como /h para benefício próprio ou de forma indevida é falta grave e resulta em punições severas.</li>
-                                 </ul>
+                            <div class="pb-6 text-gray-300 space-y-3">
+                                <p>Somos a elite. Nosso comportamento reflete a qualidade do nosso serviço. Regras são inegociáveis:</p>
+                                <ul class="list-disc list-inside pl-4 space-y-2">
+                                    <li><strong class="text-white">Atendimento ao Cliente:</strong> Seja sempre cordial, paciente e educativo. Explique os serviços. Um cliente satisfeito sempre volta.</li>
+                                    <li><strong class="text-white">Ambiente de Trabalho:</strong> Sem "zaralho" ou brincadeiras que possam danificar veículos ou atrapalhar o trabalho. Foco e profissionalismo.</li>
+                                    <li><strong class="text-red-500">Uso do Uniforme:</strong> O uniforme é para ser usado APENAS em serviço, com ponto batido. Andar pela cidade uniformizado sem estar trabalhando é passível de punição.</li>
+                                    <li><strong class="text-red-500">Abuso de Poderes:</strong> Usar comandos como /h para benefício próprio ou de forma indevida é falta grave e resulta em punições severas.</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Página Remap -->
             <div id="remap" class="page hidden">
                  <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Simulador de Remap</h1>
                  <div class="space-y-8">
@@ -344,12 +331,10 @@
                      </div>
 
                      <div id="remap-interactive-panel" class="hidden">
-                         <!-- Conteúdo do painel interativo será injetado aqui pelo JS -->
-                     </div>
+                         </div>
                  </div>
             </div>
             
-            <!-- Página Tabela -->
             <div id="tabela" class="page hidden">
                  <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Tabelas de Preços</h1>
                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -362,7 +347,6 @@
                  </div>
             </div>
 
-            <!-- Página Calculadora -->
             <div id="calculator" class="page hidden">
                 <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Calculadora de Serviços</h1>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -392,7 +376,6 @@
                             <div id="services-list" class="space-y-4"></div>
                         </div>
 
-                        <!-- NOVA SEÇÃO DE MAIS OPÇÕES -->
                         <div class="premium-card rounded-2xl reveal" style="transition-delay: 300ms;">
                             <div id="more-options-header" class="accordion-header p-6 cursor-pointer flex justify-between items-center">
                                 <h2 class="text-2xl font-bold toxic-text">Mais Opções de Estética</h2>
@@ -402,8 +385,7 @@
                                 <div class="pb-6 text-gray-300 space-y-4">
                                     <p class="text-sm text-yellow-400">Instrução: Marque os itens de estética abaixo. Para itens que <strong class="text-white">não estão na lista</strong>, apenas adicione a quantidade no campo "Número de estéticas não listadas". Cada item, listado ou não, tem o custo fixo de R$ 10.000,00.</p>
                                     <div id="extra-aesthetics-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <!-- Itens extras serão injetados aqui -->
-                                    </div>
+                                        </div>
                                     <div class="mt-4">
                                         <label for="other-aesthetics-count" class="block mb-1 font-semibold">Número de estéticas não listadas:</label>
                                         <input type="number" id="other-aesthetics-count" min="0" placeholder="0" class="service-item w-full bg-gray-800/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors">
@@ -417,12 +399,18 @@
                     <div class="lg:col-span-1 space-y-6">
                         <div class="premium-card p-6 rounded-2xl sticky top-8 reveal" style="transition-delay: 450ms;">
                             <h2 class="text-2xl font-bold mb-4">Resumo do Pedido</h2>
-                            <div class="mb-4">
-                                <p class="text-lg">Total:</p>
-                                <p id="total-price" class="text-4xl font-black toxic-text">R$ 0,00</p>
-                                <p id="discount-info" class="text-sm text-green-400 h-5"></p>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-lg">Total Cliente:</p>
+                                    <p id="total-price" class="text-4xl font-black toxic-text">R$ 0,00</p>
+                                    <p id="discount-info" class="text-sm text-green-400 h-5"></p>
+                                </div>
+                                <div id="mechanic-share-section" style="display: none;">
+                                    <p class="text-lg text-yellow-400">Valor para Mecânica:</p>
+                                    <p id="mechanic-share-value" class="text-2xl font-bold text-yellow-400"></p>
+                                </div>
                             </div>
-                            <button id="generate-summary" class="w-full toxic-bg text-black font-bold py-3 px-4 rounded-lg hover:opacity-80 transition-all duration-300 toxic-shadow mb-4">Gerar Resumo</button>
+                            <button id="generate-summary" class="w-full toxic-bg text-black font-bold py-3 px-4 rounded-lg hover:opacity-80 transition-all duration-300 toxic-shadow mt-4 mb-4">Gerar Resumo</button>
                             <textarea id="summary-output" class="w-full h-64 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500" readonly placeholder="Seu resumo aparecerá aqui..."></textarea>
                             <button id="copy-summary" class="w-full mt-2 bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-all duration-300">Copiar</button>
                             <div id="copy-feedback" class="text-center mt-2 text-green-400 opacity-0 transition-opacity">Copiado!</div>
@@ -454,8 +442,8 @@
 
             setTimeout(() => {
                 clearInterval(interval);
-                 loaderText.style.opacity = 0;
-                 setTimeout(() => {
+                loaderText.style.opacity = 0;
+                setTimeout(() => {
                     loaderText.textContent = "LESTE MECÂNICAS";
                     loaderText.style.fontSize = "2rem";
                     loaderText.style.opacity = 1;
@@ -525,11 +513,11 @@
 
                     if (!content.style.maxHeight) {
                          document.querySelectorAll('.accordion-content').forEach(c => {
-                            if (c !== content) {
-                                c.style.maxHeight = null;
-                                c.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
-                            }
-                        });
+                             if (c !== content) {
+                                 c.style.maxHeight = null;
+                                 c.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                             }
+                         });
                     }
 
                     if (content.style.maxHeight) {
@@ -672,6 +660,7 @@
             }
 
             // --- Lógica da Calculadora ---
+            let currentTotal = 0; // Variável para armazenar o total numérico
             const services = {
                 performance: [
                     { id: 'full_tuning', name: 'Full Tuning', price: 350000, partnerPrice: 300000, includes: ['motor', 'transmissao', 'suspensao', 'freio', 'turbo'] },
@@ -809,9 +798,24 @@
                     otherAestheticsPrice *= 0.90;
                 }
                 total += otherAestheticsPrice;
+                
+                currentTotal = total; // Armazena o valor numérico
 
                 document.getElementById('total-price').textContent = formatCurrency(total);
                 document.getElementById('discount-info').textContent = isPartner ? 'Desconto de parceiro aplicado!' : '';
+
+                // LÓGICA PARA EXIBIR VALOR DA MECÂNICA
+                const workshopName = document.getElementById('mec-name').value;
+                const shareSection = document.getElementById('mechanic-share-section');
+                const shareValueEl = document.getElementById('mechanic-share-value');
+
+                if (workshopName === 'Redline' || workshopName === 'Paleto Customs') {
+                    const mechanicShare = total * 0.20;
+                    shareValueEl.textContent = `${formatCurrency(mechanicShare)} (20%)`;
+                    shareSection.style.display = 'block';
+                } else {
+                    shareSection.style.display = 'none';
+                }
             }
             
             function resetCalculator() {
@@ -833,6 +837,7 @@
 
             document.querySelectorAll('.service-item').forEach(item => item.addEventListener('change', handleServiceDependencies));
             document.getElementById('partner-check').addEventListener('change', calculateTotal);
+            document.getElementById('mec-name').addEventListener('change', calculateTotal); // NOVO LISTENER
             document.getElementById('other-aesthetics-count').addEventListener('input', calculateTotal);
             
             document.getElementById('partner-check').addEventListener('change', () => {
@@ -845,7 +850,7 @@
                 const workshopName = document.getElementById('mec-name').value || '[Não informada]';
                 const clientId = document.getElementById('client-id').value || '[Não informado]';
                 const partnerName = document.getElementById('partner-name').value;
-                const total = document.getElementById('total-price').textContent;
+                const totalText = formatCurrency(currentTotal); // Usa o valor numérico armazenado
                 
                 let servicesText = '';
                 
@@ -879,6 +884,14 @@
                 if (!servicesText) servicesText = 'Nenhum serviço selecionado.\n';
 
                 const timestamp = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' });
+
+                // LÓGICA PARA INCLUIR VALOR DA MECÂNICA NO RESUMO
+                let mechanicShareText = '';
+                if (workshopName === 'Redline' || workshopName === 'Paleto Customs') {
+                    const mechanicShare = currentTotal * 0.20;
+                    mechanicShareText = `📥 **VALOR P/ MECÂNICA:** ${formatCurrency(mechanicShare)} (20%)\n`;
+                }
+
                 let summary = `**ORDEM DE SERVIÇO**\n\n` +
                     `🧑‍🔧 **Mecânico:** ${mechanicName}\n` +
                     `🏢 **Oficina:** ${workshopName}\n` +
@@ -887,7 +900,9 @@
                     `**SERVIÇOS REALIZADOS:**\n${servicesText}` +
                     `--------------------------------\n`;
                 if (isPartner) summary += `✅ **Desconto de Parceiro aplicado!** (Parceria: ${partnerName || 'Não informada'})\n\n`;
-                summary += `💰 **TOTAL CLIENTE:** ${total}\n\n*Gerado em: ${timestamp}*`;
+                
+                summary += mechanicShareText; // Adiciona a linha aqui
+                summary += `💰 **TOTAL CLIENTE:** ${totalText}\n\n*Gerado em: ${timestamp}*`;
                 document.getElementById('summary-output').value = summary;
             });
 
