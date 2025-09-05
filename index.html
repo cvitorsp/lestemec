@@ -40,7 +40,7 @@
         ::-webkit-scrollbar-thumb { background: var(--toxic-green); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #2dc20f; }
 
-        /* Premium Card Effect - REVERTED & REFINED */
+        /* Premium Card Effect */
         .premium-card {
             background: rgba(17, 17, 17, 0.7);
             border: 1px solid rgba(57, 255, 20, 0.1);
@@ -74,7 +74,6 @@
             50% { background-position: 400% 0; }
             100% { background-position: 0 0; }
         }
-
 
         /* Loading Screen */
         #preloader {
@@ -413,7 +412,13 @@
                             <button id="generate-summary" class="w-full toxic-bg text-black font-bold py-3 px-4 rounded-lg hover:opacity-80 transition-all duration-300 toxic-shadow mt-4 mb-4">Gerar Resumo</button>
                             <textarea id="summary-output" class="w-full h-64 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500" readonly placeholder="Seu resumo aparecerá aqui..."></textarea>
                             <button id="copy-summary" class="w-full mt-2 bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-all duration-300">Copiar</button>
+                            
+                            <div id="redline-actions" class="hidden">
+                               <button id="send-to-discord" class="w-full mt-2 bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-500 transition-all duration-300">Enviar para Redline</button>
+                            </div>
+
                             <div id="copy-feedback" class="text-center mt-2 text-green-400 opacity-0 transition-opacity">Copiado!</div>
+                            <div id="send-feedback" class="text-center mt-2 opacity-0 transition-opacity"></div>
                         </div>
                     </div>
                 </div>
@@ -660,6 +665,7 @@
             }
 
             // --- Lógica da Calculadora ---
+            const webhookUrl = 'https://discord.com/api/webhooks/1413591886672695427/-p2P4rFlRFu6cq9afe8wtLOC1enxtRMr8TB01PGM4-RWIzbNEgfOrtzVDjkf2xi5qehh';
             let currentTotal = 0; // Variável para armazenar o total numérico
             const services = {
                 performance: [
@@ -832,13 +838,25 @@
                 document.getElementById('partner-check').checked = false;
                 document.getElementById('partner-name').classList.add('hidden');
                 document.getElementById('summary-output').value = '';
+                document.getElementById('redline-actions').classList.add('hidden');
                 calculateTotal();
             }
 
             document.querySelectorAll('.service-item').forEach(item => item.addEventListener('change', handleServiceDependencies));
             document.getElementById('partner-check').addEventListener('change', calculateTotal);
-            document.getElementById('mec-name').addEventListener('change', calculateTotal); // NOVO LISTENER
             document.getElementById('other-aesthetics-count').addEventListener('input', calculateTotal);
+
+            // --- Listener atualizado para o seletor de mecânica ---
+            const mecNameSelect = document.getElementById('mec-name');
+            const redlineActionsContainer = document.getElementById('redline-actions');
+            mecNameSelect.addEventListener('change', () => {
+                calculateTotal();
+                if (mecNameSelect.value === 'Redline') {
+                    redlineActionsContainer.classList.remove('hidden');
+                } else {
+                    redlineActionsContainer.classList.add('hidden');
+                }
+            });
             
             document.getElementById('partner-check').addEventListener('change', () => {
                 document.getElementById('partner-name').classList.toggle('hidden', !document.getElementById('partner-check').checked);
@@ -885,7 +903,6 @@
 
                 const timestamp = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' });
 
-                // LÓGICA PARA INCLUIR VALOR DA MECÂNICA NO RESUMO
                 let mechanicShareText = '';
                 if (workshopName === 'Redline' || workshopName === 'Paleto Customs') {
                     const mechanicShare = currentTotal * 0.20;
@@ -901,7 +918,7 @@
                     `--------------------------------\n`;
                 if (isPartner) summary += `✅ **Desconto de Parceiro aplicado!** (Parceria: ${partnerName || 'Não informada'})\n\n`;
                 
-                summary += mechanicShareText; // Adiciona a linha aqui
+                summary += mechanicShareText;
                 summary += `💰 **TOTAL CLIENTE:** ${totalText}\n\n*Gerado em: ${timestamp}*`;
                 document.getElementById('summary-output').value = summary;
             });
@@ -919,6 +936,109 @@
                         resetCalculator();
                     }, 2000);
                 } catch (err) { console.error('Falha ao copiar texto: ', err); }
+            });
+
+            // --- NOVA LÓGICA DO WEBHOOK ---
+            const sendButton = document.getElementById('send-to-discord');
+            const sendFeedback = document.getElementById('send-feedback');
+
+            sendButton.addEventListener('click', async () => {
+                const mechanicName = document.getElementById('mechanic-name-input').value;
+                const clientId = document.getElementById('client-id').value;
+
+                // Validação simples
+                if (!mechanicName || !clientId || currentTotal === 0) {
+                    sendFeedback.textContent = 'Preencha Nome, ID e selecione serviços!';
+                    sendFeedback.className = 'text-center mt-2 opacity-0 transition-opacity text-red-400';
+                    sendFeedback.style.opacity = '1';
+                    setTimeout(() => { sendFeedback.style.opacity = '0'; }, 3000);
+                    return;
+                }
+
+                sendButton.disabled = true;
+                sendButton.textContent = 'Enviando...';
+                
+                // Coleta de dados
+                const isPartner = document.getElementById('partner-check').checked;
+                const partnerName = document.getElementById('partner-name').value;
+                const totalFormatted = formatCurrency(currentTotal);
+                const mechanicShare = currentTotal * 0.20;
+                const mechanicShareFormatted = formatCurrency(mechanicShare);
+                
+                let servicesList = [];
+                document.querySelectorAll('.service-item:checked:not(:disabled), .service-item:not(input)[value]:not([value="0"]):not(:disabled)').forEach(item => {
+                    const service = allServices.find(s => s.id === item.dataset.id);
+                    if (service) {
+                        let serviceName = service.name;
+                        if (item.tagName === 'SELECT') {
+                            serviceName = `${service.name} (${item.options[item.selectedIndex].text.split(' - ')[0]})`;
+                        }
+                        servicesList.push(serviceName);
+                    }
+                });
+                const otherAestheticsCount = parseInt(document.getElementById('other-aesthetics-count').value) || 0;
+                if (otherAestheticsCount > 0) {
+                    servicesList.push(`Estéticas não listadas (${otherAestheticsCount}x)`);
+                }
+                const servicesString = servicesList.length > 0 ? '• ' + servicesList.join('\n• ') : 'Nenhum serviço selecionado.';
+
+                // Monta o payload do Discord Embed
+                const payload = {
+                    username: "Leste Mecânicas - Redline",
+                    avatar_url: "https://i.imgur.com/9Go4zCY.png",
+                    embeds: [{
+                        title: "📄 Nova Ordem de Serviço",
+                        color: 3798804, // Cor #39FF14 em decimal
+                        thumbnail: { url: "https://i.imgur.com/9Go4zCY.png" },
+                        fields: [
+                            { name: "🧑‍🔧 Mecânico Responsável", value: mechanicName, inline: true },
+                            { name: "🆔 Passaporte do Cliente", value: clientId, inline: true },
+                            { name: "🛠️ Serviços Realizados", value: "```" + servicesString + "```", inline: false },
+                            { name: "📥 Valor para a Mecânica", value: `**${mechanicShareFormatted}**`, inline: true },
+                            { name: "💰 Total Cobrado do Cliente", value: `**${totalFormatted}**`, inline: true }
+                        ],
+                        footer: { text: `Gerado em: ${new Date().toLocaleString('pt-BR')}` }
+                    }]
+                };
+                
+                if (isPartner) {
+                    payload.embeds[0].fields.splice(2, 0, {
+                        name: "✅ Parceria",
+                        value: partnerName || 'Não informada',
+                        inline: false
+                    });
+                    payload.embeds[0].description = "Desconto de parceiro aplicado!";
+                }
+
+                // Envia para o Webhook
+                try {
+                    const response = await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        sendFeedback.textContent = 'Enviado com sucesso para a Redline!';
+                        sendFeedback.className = 'text-center mt-2 opacity-0 transition-opacity text-green-400';
+                        sendFeedback.style.opacity = '1';
+                        setTimeout(() => { 
+                            sendFeedback.style.opacity = '0'; 
+                            resetCalculator();
+                        }, 2500);
+                    } else {
+                        throw new Error(`Erro do servidor: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('Falha ao enviar para o Discord:', error);
+                    sendFeedback.textContent = 'Erro ao enviar. Tente novamente.';
+                    sendFeedback.className = 'text-center mt-2 opacity-0 transition-opacity text-red-400';
+                    sendFeedback.style.opacity = '1';
+                    setTimeout(() => { sendFeedback.style.opacity = '0'; }, 3000);
+                } finally {
+                    sendButton.disabled = false;
+                    sendButton.textContent = 'Enviar para Redline';
+                }
             });
         });
     </script>
