@@ -3,1044 +3,1353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mecânicas (Leste RP) - Dashboard</title>
+    <title>Sistema Jurídico | Emissão de CNPJ, Porte & Calculadora</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Biblioteca PDF/Imagem -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fontes -->
+    <link rel="stylesheet" href="https://use.typekit.net/rvb2bnx.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.1.3/24/outline/heroicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet"> 
+
     <style>
         :root {
-            --toxic-green: #39FF14;
-            --dark-bg: #0A0A0A;
-            --light-dark-bg: #111111;
+            --primary: #cba871;
+            --primary-hover: #b3925c;
+            --bg-dark: #0f172a;
+            --panel-dark: #1e293b;
         }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--dark-bg);
-            color: #EAEAEA;
-            overflow-x: hidden;
+            font-family: "Assistant", sans-serif;
+            background-color: var(--bg-dark);
+            color: #e2e8f0;
+            margin: 0;
         }
-        h1, h2, h3, .nav-link, button, select {
-            font-family: 'Orbitron', sans-serif;
+
+        .assinatura-font {
+            font-family: "lindsey-signature", sans-serif;
+            font-weight: 400;
+            font-style: normal;
         }
-        .toxic-text { color: var(--toxic-green); }
-        .toxic-bg { background-color: var(--toxic-green); }
-        .toxic-border { border-color: var(--toxic-green); }
-        .toxic-shadow { box-shadow: 0 0 20px rgba(57, 255, 20, 0.6); }
+
+        /* Scrollbar padrão e custom-scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(203, 168, 113, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         
-        .nav-link.active {
-            background-color: var(--toxic-green);
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .a4-container {
+            width: 210mm;
+            height: 296mm; 
+            overflow: hidden; 
+            background: white;
             color: black;
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: var(--toxic-green); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #2dc20f; }
-
-        /* Premium Card Effect */
-        .premium-card {
-            background: rgba(17, 17, 17, 0.7);
-            border: 1px solid rgba(57, 255, 20, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin: 0 auto;
             position: relative;
-            border-radius: 1rem;
-        }
-        .premium-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
-        }
-        .premium-card::before {
-            content: '';
-            position: absolute;
-            left: -2px; top: -2px;
-            background: linear-gradient(45deg, transparent, var(--toxic-green), transparent, transparent);
-            background-size: 400% 400%;
-            width: calc(100% + 4px);
-            height: calc(100% + 4px);
-            z-index: -1;
-            animation: steam 8s linear infinite;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out;
-            border-radius: 1rem;
-        }
-        .premium-card:hover::before { opacity: 1; }
-        @keyframes steam {
-            0% { background-position: 0 0; }
-            50% { background-position: 400% 0; }
-            100% { background-position: 0 0; }
+            transform-origin: top center;
+            transition: transform 0.3s ease-out;
         }
 
-        /* Loading Screen */
-        #preloader {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: var(--dark-bg);
-            z-index: 10001;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.8s ease-in-out, visibility 0.8s;
-            visibility: visible;
-        }
-        #preloader.loaded { 
-            opacity: 0; 
-            visibility: hidden;
-        }
-        #loader-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--toxic-green);
-            letter-spacing: 0.5rem;
-            text-shadow: 0 0 15px var(--toxic-green);
-            transition: opacity 0.3s ease-in-out, font-size 0.3s ease-in-out;
-        }
-        #loader-subtext {
-            margin-top: 1rem;
-            color: #aaa;
-            font-size: 1rem;
+        .doc-border { border: 2px solid #000; }
+        .doc-row { display: flex; border-bottom: 2px solid #000; }
+        .doc-row:last-child { border-bottom: none; }
+        .doc-cell { padding: 4px 8px; border-right: 2px solid #000; display: flex; flex-direction: column; justify-content: center; }
+        .doc-cell:last-child { border-right: none; }
+        .doc-label { font-size: 0.55rem; font-weight: 700; text-transform: uppercase; color: #333; margin-bottom: 2px; }
+        .doc-value { font-size: 0.85rem; font-weight: 600; min-height: 1.2rem; color: #000; }
+
+        .tj-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.85rem; }
+        .tj-table td { padding: 4px 0; border-bottom: 1px solid #e5e7eb; color: #111827; }
+        .tj-table tr:last-child td { border-bottom: none; }
+        .tj-table td.tj-label { font-weight: 700; width: 40%; color: #1f2937; }
+
+        .glass-panel { 
+            background: rgba(30, 41, 59, 0.85); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid rgba(255,255,255,0.05); 
         }
         
-        /* Background Canvas */
-        #background-canvas {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-        }
+        .loading-pdf { pointer-events: none; opacity: 0.7; }
 
-        /* Scroll Animations */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        .reveal.is-visible { opacity: 1; transform: translateY(0); }
-
-        /* Custom Sliders */
-        input[type=range] {
-            -webkit-appearance: none; appearance: none;
-            width: 100%; height: 8px;
-            background: var(--light-dark-bg); outline: none;
-            border-radius: 5px; border: 1px solid rgba(57, 255, 20, 0.2);
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 22px; height: 22px;
-            background: var(--toxic-green); cursor: pointer;
-            border-radius: 50%; border: 3px solid var(--dark-bg);
-            box-shadow: 0 0 8px var(--toxic-green);
-        }
+        .crime-item { transition: all 0.2s ease; cursor: pointer; }
+        .crime-item:hover { background-color: rgba(203, 168, 113, 0.15); border-color: var(--primary); transform: translateX(4px); }
+        .crime-item.selected { background-color: rgba(203, 168, 113, 0.25); border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
         
-        /* Car Simulation */
-        #car-road {
-            background: #222;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(57, 255, 20, 0.2);
-        }
-        #car-road::before {
-            content: ''; position: absolute;
-            top: 50%; left: 0;
-            width: 100%; height: 4px;
-            background: repeating-linear-gradient(90deg, #fff, #fff 20px, transparent 20px, transparent 40px);
-            animation: moveRoad 5s linear infinite;
-            transform: translateY(-50%);
-        }
-        @keyframes moveRoad {
-            from { transform: translate(0, -50%); }
-            to { transform: translate(-40px, -50%); }
-        }
-        .skidding { animation: skid 0.4s ease-in-out infinite; }
-        @keyframes skid {
-            0%, 100% { transform: translateX(0) rotate(0); }
-            25% { transform: translateX(-5px) rotate(-2deg); }
-            75% { transform: translateX(5px) rotate(2deg); }
-        }
-        .credits {
-            transition: color 0.3s ease;
-        }
-        .credits:hover {
-            color: var(--toxic-green);
-        }
+        .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s ease; }
+        .tab-btn:hover { background: rgba(255,255,255,0.05); }
+        .tab-btn.active { border-bottom-color: var(--primary); color: var(--primary); background: rgba(203, 168, 113, 0.1); }
         
-        /* Accordion */
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
-
-        /* Home page title animation */
-        .title-glow {
-            animation: text-glow 3s ease-in-out infinite;
-        }
-        @keyframes text-glow {
-            0%, 100% { text-shadow: 0 0 20px rgba(57, 255, 20, 0.6); }
-            50% { text-shadow: 0 0 35px rgba(57, 255, 20, 0.9); }
-        }
+        .dropzone { border: 2px dashed #475569; transition: all 0.3s ease; }
+        .dropzone.dragover { border-color: var(--primary); background-color: rgba(203, 168, 113, 0.1); }
+        
+        input, select, textarea { transition: all 0.3s ease; }
     </style>
 </head>
-<body class="antialiased">
+<body class="flex flex-col h-screen overflow-hidden">
 
-    <div id="preloader">
-        <div id="loader-text">LESTE</div>
-        <div id="loader-subtext">CALIBRANDO SISTEMAS...</div>
+    <div id="loading-screen" class="fixed inset-0 bg-[#0f172a] z-[100] flex flex-col items-center justify-center transition-opacity duration-1000">
+        <img src="https://i.imgur.com/7NDAXqU.png" crossorigin="anonymous" alt="Logo RP" class="h-40 mb-8 animate-pulse drop-shadow-2xl">
+        <div class="flex items-center gap-4">
+            <i class="fa-solid fa-circle-notch fa-spin text-[#cba871] text-3xl"></i>
+            <h2 class="text-[#cba871] font-bold text-2xl tracking-widest uppercase">Carregando Sistema...</h2>
+        </div>
     </div>
     
-    <canvas id="background-canvas"></canvas>
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-[#cba871]/30 p-4 z-50 flex flex-col md:flex-row justify-between items-center transform translate-y-full transition-transform duration-500 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] gap-4 md:gap-0">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-cookie-bite text-[#cba871] text-3xl"></i>
+            <p class="text-sm text-slate-300">Este sistema utiliza cookies para salvar suas preferências.<br>Ao continuar, você concorda com nossas políticas.</p>
+        </div>
+        <button onclick="aceitarCookies()" class="bg-[#cba871] text-slate-900 px-8 py-3 rounded-lg font-bold text-sm hover:bg-[#b3925c] transition-all hover:shadow-lg hover:-translate-y-0.5 md:ml-4 w-full md:w-auto">Ciente e Aceito</button>
+    </div>
 
-    <div class="min-h-screen flex flex-col lg:flex-row relative z-10">
-        <nav class="bg-black/30 backdrop-blur-sm border-r border-white/10 p-4 lg:w-64 flex flex-col">
-            <div class="flex items-center justify-center mb-12">
-                <img src="https://i.imgur.com/9Go4zCY.png" alt="Logo" class="h-24">
-            </div>
-            <ul class="flex-grow">
-                <li><a href="#" class="nav-link block text-lg font-bold p-4 rounded-lg mb-2 transition-all duration-300 hover:bg-green-500/20 active" data-page="home">Início</a></li>
-                <li><a href="#" class="nav-link block text-lg font-bold p-4 rounded-lg mb-2 transition-all duration-300 hover:bg-green-500/20" data-page="aulas">Aulas</a></li>
-                <li><a href="#" class="nav-link block text-lg font-bold p-4 rounded-lg mb-2 transition-all duration-300 hover:bg-green-500/20" data-page="remap">Remap</a></li>
-                <li><a href="#" class="nav-link block text-lg font-bold p-4 rounded-lg mb-2 transition-all duration-300 hover:bg-green-500/20" data-page="tabela">Tabela</a></li>
-                <li><a href="#" class="nav-link block text-lg font-bold p-4 rounded-lg mb-2 transition-all duration-300 hover:bg-green-500/20" data-page="calculator">Calculadora</a></li>
-            </ul>
-            <div class="text-center text-xs text-gray-600 p-4 credits">
-                <p>desenvolvido com 💚 e café por Vitor Lazerri</p> <br>
-                <p>Este site não é parte e nem vinculado a Lotus Group.</p>
-            </div>
+    <header class="bg-slate-900 border-b border-slate-700 h-auto lg:h-16 flex flex-col lg:flex-row items-center justify-between px-0 lg:px-6 shrink-0 z-10 shadow-lg">
+        <div class="flex items-center gap-4 w-full lg:w-auto justify-center lg:justify-start py-3 lg:py-0 border-b border-slate-700 lg:border-none">
+            <img src="https://i.imgur.com/7NDAXqU.png" crossorigin="anonymous" alt="Brasil RP" class="h-8 lg:h-10 object-contain">
+            <div class="h-6 lg:h-8 w-px bg-slate-600"></div>
+            <img src="https://i.imgur.com/DPg5b1B.png" crossorigin="anonymous" alt="Judiciário" class="h-8 lg:h-10 object-contain">
+        </div>
+
+        <nav class="flex h-14 lg:h-full w-full lg:w-auto overflow-x-auto no-scrollbar justify-start lg:justify-center border-b border-slate-700 lg:border-none">
+            <button onclick="switchTab('cnpj')" id="tab-cnpj" class="tab-btn active h-full px-6 flex items-center justify-center gap-2 font-bold text-slate-300 hover:text-white uppercase text-sm tracking-wide shrink-0">
+                <i class="fa-solid fa-file-contract"></i> Emissão CNPJ
+            </button>
+            <button onclick="switchTab('porte')" id="tab-porte" class="tab-btn h-full px-6 flex items-center justify-center gap-2 font-bold text-slate-300 hover:text-white uppercase text-sm tracking-wide border-l border-slate-700 shrink-0">
+                <i class="fa-solid fa-id-card-clip"></i> Solicitação Porte
+            </button>
+            <button onclick="switchTab('calc')" id="tab-calc" class="tab-btn h-full px-6 flex items-center justify-center gap-2 font-bold text-slate-300 hover:text-white uppercase text-sm tracking-wide border-l border-slate-700 shrink-0">
+                <i class="fa-solid fa-calculator"></i> Calculadora Penal
+            </button>
         </nav>
 
-        <main class="flex-1 p-4 sm:p-6 lg:p-8">
-            
-            <div id="home" class="page">
-                <div class="text-center flex flex-col justify-center items-center h-full">
-                     <div class="premium-card p-10 rounded-2xl reveal w-full max-w-4xl">
-                         <h1 class="text-5xl md:text-7xl font-black toxic-text tracking-widest title-glow">LESTE MECÂNICAS</h1>
-                         <p class="mt-4 text-xl text-gray-300">Acelere seus sonhos. Performance e Estilo no limite.</p>
-                     </div>
-                     <div class="mt-12 grid md:grid-cols-3 gap-8 w-full max-w-6xl">
-                         <div class="premium-card p-6 rounded-2xl reveal" style="transition-delay: 200ms;">
-                             <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500/20 mx-auto mb-4">
-                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-red-400"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-                             </div>
-                             <h3 class="text-xl font-bold mb-2 text-red-400">Veículos Restritos</h3>
-                             <p class="text-gray-400 text-sm">Proibido fazer alterações em veículos da prefeitura, como viaturas, veículos de mecânica e OAB.</p>
-                         </div>
-                         <div class="premium-card p-6 rounded-2xl reveal" style="transition-delay: 350ms;">
-                             <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-500/20 mx-auto mb-4">
-                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-yellow-400"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                             </div>
-                             <h3 class="text-xl font-bold mb-2 text-yellow-400">Valores da Tabela</h3>
-                             <p class="text-gray-400 text-sm">É proibido cobrar valores acima ou abaixo da tabela. Infrações podem resultar em wipe ou banimento.</p>
-                         </div>
-                         <div class="premium-card p-6 rounded-2xl reveal" style="transition-delay: 500ms;">
-                             <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/20 mx-auto mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-green-400"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" /></svg>
-                             </div>
-                             <h3 class="text-xl font-bold mb-2 text-green-400">Dúvidas e Suporte</h3>
-                             <p class="text-gray-400 text-sm">Problemas que fujam do RP podem ser relatados ao Auxiliar: Vitor Lazerri ou ao Responsável: Afonso Jackson.</p>
-                         </div>
-                     </div>
-                </div>
+        <div class="hidden lg:flex items-center gap-3">
+            <div class="text-right">
+                <h1 class="text-white font-bold text-lg tracking-wide drop-shadow-md">SISTEMA JURÍDICO INTEGRADO</h1>
             </div>
+            <i class="fa-solid fa-scale-balanced text-[#cba871] text-2xl ml-2 drop-shadow-md"></i>
+        </div>
+    </header>
+
+    <!-- ==================== ABA 1: CNPJ ==================== -->
+    <div id="view-cnpj" class="flex flex-col lg:flex-row flex-1 overflow-y-auto lg:overflow-hidden">
+        <aside class="w-full lg:w-1/3 lg:min-w-[420px] lg:max-w-[500px] glass-panel overflow-y-visible lg:overflow-y-auto p-5 lg:p-6 flex flex-col gap-6 relative z-10 shrink-0 custom-scrollbar">
             
-            <div id="aulas" class="page hidden">
-                <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Central de Treinamento</h1>
-                <div class="space-y-6 max-w-4xl mx-auto">
-                    <div class="premium-card rounded-2xl reveal">
-                        <div class="accordion-header p-6 cursor-pointer flex justify-between items-center">
-                            <h2 class="text-2xl font-bold">Aula 1: A Arte do Remap</h2>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-                        </div>
-                        <div class="accordion-content px-6">
-                            <div class="pb-6 text-gray-300 space-y-3">
-                                <p>O Remap é o serviço mais completo de performance. Ele inclui a ativação do <strong class="toxic-text">Turbo</strong>, a instalação de <strong class="toxic-text">Pops & Bangs</strong> (estouros no escapamento) e o ajuste da <strong class="toxic-text">Wastegate</strong> (válvula de alívio).</p>
-                                <p>O segredo é o equilíbrio. Use o nosso Simulador de Remap para entender como cada ajuste afeta o carro. Lembre-se:</p>
-                                <ul class="list-disc list-inside pl-4 space-y-2">
-                                    <li><strong class="text-white">Potência (Torque/Aceleração):</strong> Define sua velocidade. Pode maximizar, mas só se o carro tiver bom controle.</li>
-                                    <li><strong class="text-white">Controle (Ângulo/Aderência):</strong> Define sua dirigibilidade. Ajustes pequenos aqui fazem grande diferença. Exagerar no ângulo ou na aderência pode tornar o carro incontrolável.</li>
-                                </ul>
-                            </div>
-                        </div>
+            <div class="bg-slate-800/60 p-5 rounded-xl border border-[#cba871]/30 shadow-sm hover:border-[#cba871]/50 transition-colors">
+                <h2 class="text-[#cba871] font-bold text-xl mb-4 flex items-center gap-2"><i class="fa-solid fa-file-signature"></i> Dados da Empresa</h2>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">NÚMERO DO CNPJ</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="input-cnpj" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white font-mono focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none transition-all" readonly>
+                        <button onclick="gerarCNPJ()" class="bg-[#cba871] text-slate-900 px-4 py-2.5 rounded-lg font-bold hover:bg-[#b3925c] hover:shadow-md transition-all active:scale-95"><i class="fa-solid fa-rotate"></i></button>
                     </div>
-                    <div class="premium-card rounded-2xl reveal">
-                        <div class="accordion-header p-6 cursor-pointer flex justify-between items-center">
-                            <h2 class="text-2xl font-bold">Aula 2: Avaliação de Veículos</h2>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-                        </div>
-                        <div class="accordion-content px-6">
-                            <div class="pb-6 text-gray-300 space-y-3">
-                                <p>Avaliar um veículo é entender a necessidade do cliente. Faça as perguntas certas:</p>
-                                <ul class="list-disc list-inside pl-4 space-y-2">
-                                    <li>"Você sente o carro lento na arrancada ou na velocidade final?" - <strong class="text-white">Sugestão: Motor, Turbo, Transmissão.</strong></li>
-                                    <li>"O carro está instável nas curvas?" - <strong class="text-white">Sugestão: Suspensão, Aderência.</strong></li>
-                                    <li>"Ele demora para frear?" - <strong class="text-white">Sugestão: Freios.</strong></li>
-                                </ul>
-                                <p class="pt-2"><strong class="text-yellow-400">Ponto de Atenção:</strong> A <strong class="text-white">Blindagem</strong> adiciona muito peso ao veículo. Um carro blindado SEMPRE precisará de melhorias no motor e freios para compensar e manter um bom desempenho.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="premium-card rounded-2xl reveal">
-                        <div class="accordion-header p-6 cursor-pointer flex justify-between items-center">
-                            <h2 class="text-2xl font-bold">Aula 3: Código de Conduta</h2>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-                        </div>
-                        <div class="accordion-content px-6">
-                            <div class="pb-6 text-gray-300 space-y-3">
-                                <p>Somos a elite. Nosso comportamento reflete a qualidade do nosso serviço. Regras são inegociáveis:</p>
-                                <ul class="list-disc list-inside pl-4 space-y-2">
-                                    <li><strong class="text-white">Atendimento ao Cliente:</strong> Seja sempre cordial, paciente e educativo. Explique os serviços. Um cliente satisfeito sempre volta.</li>
-                                    <li><strong class="text-white">Ambiente de Trabalho:</strong> Sem "zaralho" ou brincadeiras que possam danificar veículos ou atrapalhar o trabalho. Foco e profissionalismo.</li>
-                                    <li><strong class="text-red-500">Uso do Uniforme:</strong> O uniforme é para ser usado APENAS em serviço, com ponto batido. Andar pela cidade uniformizado sem estar trabalhando é passível de punição.</li>
-                                    <li><strong class="text-red-500">Abuso de Poderes:</strong> Usar comandos como /h para benefício próprio ou de forma indevida é falta grave e resulta em punições severas.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">RAZÃO SOCIAL</label>
+                    <input type="text" id="input-razao" oninput="updateDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none uppercase hover:border-slate-500 transition-all">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">NOME FANTASIA</label>
+                    <input type="text" id="input-fantasia" oninput="updateDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none uppercase hover:border-slate-500 transition-all">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">ENDEREÇO</label>
+                    <input type="text" id="input-endereco" oninput="updateDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none uppercase hover:border-slate-500 transition-all">
                 </div>
             </div>
 
-            <div id="remap" class="page hidden">
-                 <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Simulador de Remap</h1>
-                 <div class="space-y-8">
-                     <div class="premium-card p-6 rounded-2xl reveal">
-                         <h2 class="text-2xl font-bold mb-4">Guia de Remap: Do Básico ao Pro</h2>
-                         <p class="mb-4 text-gray-400">Remapear um carro é uma arte. O objetivo é encontrar o equilíbrio perfeito entre potência e controle. Um ajuste errado pode transformar um supercarro em um "sabão" incontrolável. Siga estas dicas:</p>
-                         <ul class="space-y-3 text-gray-300">
-                             <li><strong class="text-white">Torque e Aceleração:</strong> Estes são seus medidores de <span class="toxic-text">potência bruta</span>. Para máxima velocidade e arrancada, você pode levá-los ao limite. Carros com mais torque saem na frente, enquanto maior aceleração garante velocidade final.</li>
-                             <li><strong class="text-white">Força de Frenagem:</strong> Segurança em primeiro lugar. Um freio mais forte permite que você entre em curvas com mais velocidade e corrija erros rapidamente. Pode deixar no <span class="toxic-text">máximo</span> sem medo.</li>
-                             <li><strong class="text-white">Ângulo de Viragem:</strong> <span class="text-yellow-400">CUIDADO!</span> Este é o ajuste mais sensível. Aumentar um pouco (5 a 10 pontos do padrão) deixa o carro mais ágil. Aumentar demais faz o carro girar em alta velocidade e <span class="text-red-500 font-bold">risco de capotar</span>.</li>
-                             <li><strong class="text-white">Aderência nas Curvas:</strong> Complementa o ângulo. Mais aderência "gruda" o carro no chão. Assim como o ângulo, um excesso pode deixar o carro <span class="text-yellow-400">rígido e imprevisível</span>, fazendo-o deslizar subitamente em vez de derrapar de forma controlada.</li>
-                         </ul>
-                     </div>
-
-                     <div id="remap-setup" class="premium-card p-6 rounded-2xl reveal">
-                         <h2 class="text-2xl font-bold mb-2">Parâmetros do Veículo</h2>
-                         <p class="mb-6 text-gray-300">Informe os valores <span class="font-bold toxic-text">atuais</span> para calibrar o simulador.</p>
-                         <form id="remap-form" class="space-y-4">
-                             <input type="number" id="std-torque" placeholder="Torque Atual" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors" step="0.01" required>
-                             <input type="number" id="std-aceleracao" placeholder="Aceleração Atual" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors" step="0.01" required>
-                             <input type="number" id="std-angulo" placeholder="Ângulo Atual" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors" step="1" required>
-                             <input type="number" id="std-frenagem" placeholder="Frenagem Atual" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors" step="0.01" required>
-                             <input type="number" id="std-aderencia" placeholder="Aderência Atual" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors" step="0.01" required>
-                             <div class="pt-2">
-                                 <button type="submit" class="w-full toxic-bg text-black font-bold py-3 px-4 rounded-lg hover:opacity-80 transition-all duration-300 toxic-shadow">Gerar Simulação</button>
-                             </div>
-                         </form>
-                     </div>
-
-                     <div id="remap-interactive-panel" class="hidden">
-                         </div>
-                 </div>
-            </div>
-            
-            <div id="tabela" class="page hidden">
-                 <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Tabelas de Preços</h1>
-                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                     <div class="premium-card p-4 rounded-2xl reveal">
-                         <img src="https://i.imgur.com/rNCP1Rc.png" alt="Tabela de Preços 1" class="rounded-lg w-full" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0A0A0A/EAEAEA?text=Imagem+Nao+Encontrada';">
-                     </div>
-                     <div class="premium-card p-4 rounded-2xl reveal" style="transition-delay: 150ms;">
-                         <img src="https://i.imgur.com/25HbR4Y.png" alt="Tabela de Preços 2" class="rounded-lg w-full" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0A0A0A/EAEAEA?text=Imagem+Nao+Encontrada';">
-                     </div>
-                 </div>
+            <div class="bg-slate-800/60 p-5 rounded-xl border border-slate-600/50 shadow-sm hover:border-slate-500 transition-colors">
+                <h2 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-briefcase text-slate-400"></i> Atividade e Natureza</h2>
+                <select id="input-cnae" onchange="updateDoc()" class="w-full mb-4 bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all">
+                    <option value="">Selecione a atividade...</option>
+                    <option value="2542-0/00 - Fabricação de armas de fogo, outras armas e munições.">2542-0/00 - Indústria Bélica</option>
+                    <option value="4520-0/01 - Serviços de manutenção e reparação mecânica de veículos.">4520-0/01 - Mecânica</option>
+                    <option value="9329-8/01 - Discotecas, danceterias, salões de dança e similares.">9329-8/01 - Boate</option>
+                    <option value="8610-1/01 - Atividades de atendimento hospitalar.">8610-1/01 - Hospital</option>
+                </select>
+                <select id="input-natureza" onchange="updateDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all">
+                    <option value="">Selecione a natureza...</option>
+                    <option value="206-2 - Sociedade Empresária Limitada">206-2 - LTDA</option>
+                    <option value="213-5 - Empresário Individual">213-5 - EI</option>
+                </select>
             </div>
 
-            <div id="calculator" class="page hidden">
-                <h1 class="text-4xl font-bold mb-8 toxic-text reveal">Calculadora de Serviços</h1>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="premium-card p-6 rounded-2xl reveal">
-                            <h2 class="text-2xl font-bold mb-4">Dados do Mecânico</h2>
-                            <div class="space-y-4">
-                                <input type="text" id="mechanic-name-input" placeholder="Nome do Mecânico" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <select id="mec-name" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors">
-                                        <option value="">Selecione a mecânica</option>
-                                        <option value="Race">Race</option>
-                                        <option value="Paleto Customs">Paleto Customs</option>
-                                        <option value="Redline">Redline</option>
-                                    </select>
-                                    <input type="text" id="client-id" placeholder="Passaporte (ID)" class="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors">
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="partner-check" class="form-checkbox h-5 w-5 text-green-500 bg-gray-700 border-gray-600 rounded focus:ring-green-500"><span class="text-lg">Possui Parceria?</span></label>
-                                <input type="text" id="partner-name" placeholder="Nome da Parceria" class="hidden w-full mt-2 bg-gray-900/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors">
-                            </div>
-                        </div>
+            <div class="bg-slate-800/60 p-5 rounded-xl border border-slate-600/50 shadow-sm hover:border-slate-500 transition-colors">
+                <h2 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-user-tie text-slate-400"></i> Representante Legal</h2>
+                <div class="flex gap-6 mb-5 bg-slate-900/50 p-3 rounded-lg">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold hover:text-[#cba871] transition-colors"><input type="radio" name="tipo_rep" value="Representante" checked onchange="updateDoc()" class="accent-[#cba871] w-4 h-4"> Representante</label>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold hover:text-[#cba871] transition-colors"><input type="radio" name="tipo_rep" value="Preposto" onchange="updateDoc()" class="accent-[#cba871] w-4 h-4"> Preposto</label>
+                </div>
+                <input type="text" id="input-rep-nome" oninput="updateDoc()" class="w-full mb-4 bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white uppercase focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="NOME COMPLETO">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="input-rep-cpf" oninput="updateDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="PASSAPORTE">
+                    <input type="text" id="input-rep-data" oninput="updateDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all">
+                </div>
+            </div>
 
-                        <div class="premium-card p-6 rounded-2xl reveal" style="transition-delay: 150ms;">
-                            <h2 class="text-2xl font-bold mb-4">Selecionar Serviços</h2>
-                            <div id="services-list" class="space-y-4"></div>
-                        </div>
+            <div class="bg-slate-800/60 p-5 rounded-xl border border-[#cba871]/30 shadow-sm hover:border-[#cba871]/50 transition-colors">
+                <h2 class="text-[#cba871] font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-gavel"></i> Advogado Responsável</h2>
+                <input type="text" id="input-adv-nome" oninput="updateDoc()" class="w-full mb-4 bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white uppercase focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="NOME DO ADVOGADO">
+                
+                <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">Nº DA OAB</label>
+                <input type="text" id="input-adv-id" oninput="updateDoc()" class="w-full mb-5 bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white uppercase focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="Ex: FMA6Y4JE">
+                
+                <label class="block text-xs font-semibold text-indigo-400 mb-1 tracking-wider flex items-center gap-1.5"><i class="fa-brands fa-discord"></i> WEBHOOK (DISCORD)</label>
+                <input type="password" id="input-webhook" value="https://discord.com/api/webhooks/1492550407308837057/JInr_ekobOHNb9MFZRIDaKCWxmUhmjlvdvqgLfzBsMFZMYJkN5TJJ_AlJOL76GDIwPJQ" class="w-full bg-slate-900/80 border border-indigo-500/50 rounded-lg px-4 py-2.5 text-white text-xs focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none hover:border-indigo-400/80 transition-all">
+            </div>
 
-                        <div class="premium-card rounded-2xl reveal" style="transition-delay: 300ms;">
-                            <div id="more-options-header" class="accordion-header p-6 cursor-pointer flex justify-between items-center">
-                                <h2 class="text-2xl font-bold toxic-text">Mais Opções de Estética</h2>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-                            </div>
-                            <div class="accordion-content px-6">
-                                <div class="pb-6 text-gray-300 space-y-4">
-                                    <p class="text-sm text-yellow-400">Instrução: Marque os itens de estética abaixo. Para itens que <strong class="text-white">não estão na lista</strong>, apenas adicione a quantidade no campo "Número de estéticas não listadas". Cada item, listado ou não, tem o custo fixo de R$ 10.000,00.</p>
-                                    <div id="extra-aesthetics-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        </div>
-                                    <div class="mt-4">
-                                        <label for="other-aesthetics-count" class="block mb-1 font-semibold">Número de estéticas não listadas:</label>
-                                        <input type="number" id="other-aesthetics-count" min="0" placeholder="0" class="service-item w-full bg-gray-800/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-green-500/50 transition-colors">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="flex flex-col gap-4 mb-8 lg:mb-4">
+                <button onclick="downloadPDF('documento-pdf', 'btn-pdf', 'CNPJ')" id="btn-pdf" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm border border-slate-500 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95"><i class="fa-solid fa-download"></i> BAIXAR (PDF)</button>
+                <button onclick="enviarDiscordCNPJ()" id="btn-discord" class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-lg py-4 rounded-xl shadow-[0_4px_15px_rgba(88,101,242,0.4)] hover:shadow-[0_6px_20px_rgba(88,101,242,0.6)] hover:-translate-y-0.5 transition-all flex justify-center gap-3 active:scale-95"><i class="fa-brands fa-discord text-xl"></i> ENVIAR PARA O DISCORD</button>
+            </div>
+        </aside>
 
+        <main class="w-full lg:flex-1 bg-gray-300 overflow-y-visible lg:overflow-y-auto p-4 lg:p-8 flex justify-center items-start min-h-[600px] shadow-inner custom-scrollbar" id="preview-area">
+            <div id="documento-pdf" class="a4-container p-10 flex flex-col relative z-0">
+                <div class="flex items-center justify-between mb-4 border-b-2 border-black pb-4">
+                    <div class="w-1/4"><img src="https://i.imgur.com/7NDAXqU.png" crossorigin="anonymous" class="h-16 grayscale opacity-90"></div>
+                    <div class="w-2/4 text-center">
+                        <h2 class="font-bold text-xl uppercase leading-tight">República Federativa do Brasil RP</h2>
+                        <h3 class="font-bold text-lg uppercase mt-1">Cadastro Nacional da Pessoa Jurídica</h3>
                     </div>
-
-                    <div class="lg:col-span-1 space-y-6">
-                        <div class="premium-card p-6 rounded-2xl sticky top-8 reveal" style="transition-delay: 450ms;">
-                            <h2 class="text-2xl font-bold mb-4">Resumo do Pedido</h2>
-                            <div class="space-y-3">
-                                <div>
-                                    <p class="text-lg">Total Cliente:</p>
-                                    <p id="total-price" class="text-4xl font-black toxic-text">R$ 0,00</p>
-                                    <p id="discount-info" class="text-sm text-green-400 h-5"></p>
-                                </div>
-                                <div id="mechanic-share-section" style="display: none;">
-                                    <p class="text-lg text-yellow-400">Valor para Mecânica:</p>
-                                    <p id="mechanic-share-value" class="text-2xl font-bold text-yellow-400"></p>
-                                </div>
-                            </div>
-                            <button id="generate-summary" class="w-full toxic-bg text-black font-bold py-3 px-4 rounded-lg hover:opacity-80 transition-all duration-300 toxic-shadow mt-4 mb-4">Gerar Resumo</button>
-                            <textarea id="summary-output" class="w-full h-64 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500" readonly placeholder="Seu resumo aparecerá aqui..."></textarea>
-                            <button id="copy-summary" class="w-full mt-2 bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-all duration-300">Copiar</button>
-                            
-                            <div id="redline-actions" class="hidden">
-                               <button id="send-to-discord" class="w-full mt-2 bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-500 transition-all duration-300">Enviar para Redline</button>
-                            </div>
-
-                            <div id="copy-feedback" class="text-center mt-2 text-green-400 opacity-0 transition-opacity">Copiado!</div>
-                            <div id="send-feedback" class="text-center mt-2 opacity-0 transition-opacity"></div>
+                    <div class="w-1/4 flex justify-end"><img src="https://i.imgur.com/mLampIb.png" crossorigin="anonymous" class="h-16 grayscale opacity-90"></div>
+                </div>
+                <div class="doc-border flex flex-col mb-4">
+                    <div class="doc-row"><div class="doc-cell w-full text-center bg-gray-100 py-2"><span class="doc-label">NÚMERO DE INSCRIÇÃO (CNPJ)</span><span class="doc-value text-xl font-bold tracking-widest mt-1" id="doc-cnpj"></span></div></div>
+                    <div class="doc-row"><div class="doc-cell w-full"><span class="doc-label">01. NOME EMPRESARIAL</span><span class="doc-value mt-1" id="doc-razao"></span></div></div>
+                    <div class="doc-row"><div class="doc-cell w-full"><span class="doc-label">02. NOME FANTASIA</span><span class="doc-value mt-1" id="doc-fantasia"></span></div></div>
+                    <div class="doc-row"><div class="doc-cell w-full"><span class="doc-label">03. LOCAL DA EMPRESA (ENDEREÇO)</span><span class="doc-value mt-1" id="doc-endereco"></span></div></div>
+                    <div class="doc-row"><div class="doc-cell w-full min-h-[50px]"><span class="doc-label">04. CÓDIGO E DESCRIÇÃO DA ATIVIDADE ECONÔMICA</span><span class="doc-value mt-1 text-sm leading-tight" id="doc-cnae"></span></div></div>
+                    <div class="doc-row"><div class="doc-cell w-full"><span class="doc-label">05. CÓDIGO E DESCRIÇÃO DA NATUREZA JURÍDICA</span><span class="doc-value mt-1" id="doc-natureza"></span></div></div>
+                    <div class="doc-row bg-gray-100"><div class="doc-cell w-full text-center py-1"><span class="doc-label !mb-0">06. IDENTIFICAÇÃO DO REPRESENTANTE</span></div></div>
+                    <div class="doc-row">
+                        <div class="doc-cell w-[30%] border-r-0 flex flex-col justify-center gap-2 py-2">
+                            <label class="text-[0.65rem] font-bold flex items-center gap-2"><span class="border border-black w-4 h-4 flex items-center justify-center bg-white" id="box-rep"></span> REPRESENTANTE</label>
+                            <label class="text-[0.65rem] font-bold flex items-center gap-2"><span class="border border-black w-4 h-4 flex items-center justify-center bg-white" id="box-pre"></span> PREPOSTO</label>
+                        </div>
+                        <div class="doc-cell w-[70%] border-l-2 border-black"><span class="doc-label">NOME</span><span class="doc-value mt-1" id="doc-rep-nome"></span></div>
+                    </div>
+                    <div class="doc-row border-b-2 border-black">
+                        <div class="doc-cell w-[25%]"><span class="doc-label">CPF</span><span class="doc-value mt-1" id="doc-rep-cpf"></span></div>
+                        <div class="doc-cell w-[25%]"><span class="doc-label">LOCAL E DATA</span><span class="doc-value mt-1 text-xs" id="doc-rep-data"></span></div>
+                        <div class="doc-cell w-[50%] relative min-h-[60px] overflow-hidden">
+                            <span class="doc-label absolute top-1 left-2">ASSINATURA</span>
+                            <div class="flex-1 flex items-center justify-center mt-3"><span class="assinatura-font text-3xl text-blue-900" style="transform: rotate(-3deg);" id="doc-rep-assinatura"></span></div>
                         </div>
                     </div>
+                    <div class="doc-row h-[130px]">
+                        <div class="doc-cell w-1/2 p-0 border-r-2 border-black">
+                            <div class="bg-gray-100 border-b-2 border-black py-1 text-center"><span class="doc-label !mb-0">07. CARTÓRIO</span></div>
+                            <div class="p-2 h-full flex flex-col justify-center items-center relative">
+                                <div class="border-[3px] border-red-800/80 rounded-full w-24 h-24 flex flex-col justify-center items-center transform -rotate-12 absolute opacity-80" style="box-shadow: inset 0 0 0 1px rgba(153, 27, 27, 0.5);">
+                                    <span class="text-[0.45rem] font-bold text-red-800 leading-none">PODER JUDICIÁRIO</span>
+                                    <i class="fa-solid fa-scale-balanced text-red-800 text-xs my-[2px]"></i>
+                                    <span class="text-[0.4rem] font-bold text-red-800 border-t border-red-800/50 pt-[2px]">AUTENTICADO</span>
+                                    <span class="text-[0.45rem] font-bold text-red-800 mt-[2px]" id="doc-carimbo-data"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="doc-cell w-1/2 p-0">
+                            <div class="bg-gray-100 border-b-2 border-black py-1 text-center"><span class="doc-label !mb-0">08. RECIBO ADVOGADO</span></div>
+                            <div class="p-2 h-full flex flex-col justify-end">
+                                <div class="flex-1 flex items-center justify-center"><span class="assinatura-font text-3xl text-blue-900" style="transform: rotate(-2deg);" id="doc-adv-assinatura"></span></div>
+                                <div class="text-center mt-auto">
+                                    <div class="border-b border-black w-4/5 mx-auto mb-1"></div>
+                                    <span class="doc-label text-[0.55rem] block !mb-0" id="doc-adv-nome-rodape"></span>
+                                    <span class="doc-label text-[0.45rem] block text-gray-600">OAB: <span id="doc-adv-id-rodape"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-auto pt-4 flex justify-between items-end">
+                    <div class="flex items-center gap-4 w-3/4">
+                        <img src="https://i.imgur.com/DPg5b1B.png" crossorigin="anonymous" class="h-12 grayscale opacity-90">
+                        <div class="text-[0.55rem] text-gray-800 font-bold leading-tight text-justify border-l-2 border-black pl-3 uppercase">Confira os dados, se houver divergência providencie atualização cadastral.</div>
+                    </div>
+                    <div class="w-1/4 text-right"><span class="text-[0.55rem] text-gray-600 font-bold">IN RFB nº 1.470/2014.</span></div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- EFEITOS VISUAIS MODERNOS ---
-            const preloader = document.getElementById('preloader');
+    <!-- ==================== ABA 2: PORTE DE ARMA ==================== -->
+    <div id="view-porte" class="hidden flex-col lg:flex-row flex-1 overflow-y-auto lg:overflow-hidden">
+        <aside class="w-full lg:w-1/3 lg:min-w-[420px] lg:max-w-[500px] glass-panel overflow-y-visible lg:overflow-y-auto p-5 lg:p-6 flex flex-col gap-6 relative z-10 shrink-0 custom-scrollbar">
             
-            // --- NOVA ANIMAÇÃO DE CARREGAMENTO ---
-            const loaderText = document.getElementById('loader-text');
-            const loaderSubtext = document.getElementById('loader-subtext');
-            const words = ["LESTE", "TUNING", "CUSTOMS", "PERFORMANCE", "MECÂNICAS"];
-            let wordIndex = 0;
-            let interval = setInterval(() => {
-                wordIndex = (wordIndex + 1) % words.length;
-                loaderText.style.opacity = 0;
-                setTimeout(() => {
-                    loaderText.textContent = words[wordIndex];
-                    loaderText.style.opacity = 1;
-                }, 200);
-            }, 400);
-
-            setTimeout(() => {
-                clearInterval(interval);
-                loaderText.style.opacity = 0;
-                setTimeout(() => {
-                    loaderText.textContent = "LESTE MECÂNICAS";
-                    loaderText.style.fontSize = "2rem";
-                    loaderText.style.opacity = 1;
-                    loaderSubtext.textContent = "SISTEMAS ONLINE";
-                }, 300);
-                setTimeout(() => {
-                    preloader.classList.add('loaded');
-                }, 1200);
-            }, 2500);
-
-
-            const bgCanvas = document.getElementById('background-canvas');
-            const bgCtx = bgCanvas.getContext('2d');
-            
-            function setupCanvas(canvas) {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            setupCanvas(bgCanvas);
-
-            let time = 0;
-            function animateBg() {
-                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-                bgCtx.globalCompositeOperation = 'lighter';
-                let x = bgCanvas.width / 2 + Math.sin(time * 0.001) * bgCanvas.width * 0.3;
-                let y = bgCanvas.height / 2 + Math.cos(time * 0.0012) * bgCanvas.height * 0.3;
-                let grad = bgCtx.createRadialGradient(x, y, 0, x, y, bgCanvas.width * 0.4);
-                grad.addColorStop(0, 'rgba(57, 255, 20, 0.08)');
-                grad.addColorStop(1, 'rgba(57, 255, 20, 0)');
-                bgCtx.fillStyle = grad;
-                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-                time++;
-                requestAnimationFrame(animateBg);
-            }
-            animateBg();
-
-            const scrollElements = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            scrollElements.forEach(el => observer.observe(el));
-
-            const navLinks = document.querySelectorAll('.nav-link');
-            const pages = document.querySelectorAll('.page');
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const pageId = link.getAttribute('data-page');
-                    pages.forEach(page => page.classList.add('hidden'));
-                    document.getElementById(pageId).classList.remove('hidden');
-                    navLinks.forEach(nav => nav.classList.remove('active'));
-                    link.classList.add('active');
-                });
-            });
-            
-            // --- Lógica do Acordeão ---
-            const accordionHeaders = document.querySelectorAll('.accordion-header');
-            accordionHeaders.forEach(header => {
-                header.addEventListener('click', () => {
-                    const content = header.nextElementSibling;
-                    const icon = header.querySelector('svg');
-
-                    if (!content.style.maxHeight) {
-                         document.querySelectorAll('.accordion-content').forEach(c => {
-                             if (c !== content) {
-                                 c.style.maxHeight = null;
-                                 c.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
-                             }
-                         });
-                    }
-
-                    if (content.style.maxHeight) {
-                        content.style.maxHeight = null;
-                        icon.style.transform = 'rotate(0deg)';
-                    } else {
-                        content.style.maxHeight = content.scrollHeight + "px";
-                        icon.style.transform = 'rotate(180deg)';
-                    }
-                });
-            });
-
-            // --- Lógica do Simulador de Remap ---
-            const remapPanelContainer = document.getElementById('remap-interactive-panel');
-            const remapForm = document.getElementById('remap-form');
-            const maxValues = { torque: 0.6, aceleracao: 1.1, angulo: 80, frenagem: 5.1, aderencia: 6.3 };
-            let userStandardValues = {};
-
-            if(remapForm) {
-                remapForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    userStandardValues = {
-                        torque: parseFloat(document.getElementById('std-torque').value),
-                        aceleracao: parseFloat(document.getElementById('std-aceleracao').value),
-                        angulo: parseFloat(document.getElementById('std-angulo').value),
-                        frenagem: parseFloat(document.getElementById('std-frenagem').value),
-                        aderencia: parseFloat(document.getElementById('std-aderencia').value)
-                    };
-                    const suggestion = {
-                        torque: maxValues.torque,
-                        aceleracao: maxValues.aceleracao,
-                        angulo: Math.min(maxValues.angulo, userStandardValues.angulo + 7),
-                        frenagem: maxValues.frenagem,
-                        aderencia: Math.min(maxValues.aderencia, userStandardValues.aderencia + 0.3).toFixed(2)
-                    };
-
-                    remapPanelContainer.innerHTML = `
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <div class="premium-card p-6 rounded-2xl reveal is-visible">
-                                <h2 class="text-2xl font-bold mb-4">Sugestão de Configuração</h2>
-                                <div id="remap-suggestion" class="bg-gray-900 p-4 rounded-md border border-gray-700 space-y-1">
-                                    ${Object.entries(suggestion).map(([key, value]) => `<p><span class="font-semibold text-white capitalize">${key}:</span> <span class="toxic-text">${value}</span></p>`).join('')}
-                                </div>
-                                <button id="back-to-setup" class="w-full mt-4 bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-all duration-300">Inserir Novos Dados</button>
-                            </div>
-                            <div class="premium-card p-6 rounded-2xl reveal is-visible" style="transition-delay: 150ms;">
-                                <h2 class="text-2xl font-bold mb-4">Painel Interativo</h2>
-                                <div class="space-y-4">
-                                    <div><label for="torque" class="flex justify-between font-semibold"><span>Torque</span> <span id="torque-value" class="toxic-text"></span></label><input type="range" id="torque" min="0" step="0.01" class="remap-slider"></div>
-                                    <div><label for="aceleracao" class="flex justify-between font-semibold"><span>Aceleração</span> <span id="aceleracao-value" class="toxic-text"></span></label><input type="range" id="aceleracao" min="0" step="0.01" class="remap-slider"></div>
-                                    <div><label for="angulo" class="flex justify-between font-semibold"><span>Ângulo</span> <span id="angulo-value" class="toxic-text"></span></label><input type="range" id="angulo" min="0" step="1" class="remap-slider"></div>
-                                    <div><label for="frenagem" class="flex justify-between font-semibold"><span>Frenagem</span> <span id="frenagem-value" class="toxic-text"></span></label><input type="range" id="frenagem" min="0" step="0.01" class="remap-slider"></div>
-                                    <div><label for="aderencia" class="flex justify-between font-semibold"><span>Aderência</span> <span id="aderencia-value" class="toxic-text"></span></label><input type="range" id="aderencia" min="0" step="0.01" class="remap-slider"></div>
-                                    <div class="mt-6 text-center"><button id="reset-remap" class="w-full toxic-bg text-black font-bold py-2 px-4 rounded-lg hover:opacity-80 transition-all duration-300 toxic-shadow">Resetar para Padrão</button></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-8 premium-card p-6 rounded-2xl reveal is-visible lg:col-span-2" style="transition-delay: 300ms;">
-                            <h2 class="text-2xl font-bold mb-4 text-center">Simulação de Pista</h2>
-                            <div id="car-road" class="w-full h-32 rounded-lg flex items-center justify-center relative">
-                                <div id="sim-car" class="w-24 h-12">
-                                    <svg viewBox="0 0 120 50" fill="currentColor" class="text-green-400"><path d="M117.2,22.8l-12.5-0.2c-1.5-3.8-5.3-6.5-9.8-6.5H73.3c-2.3,0-4.4,0.9-6,2.4l-11.2-12C54.7,5.1,52.5,4,50,4H14.4 c-4.5,0-8.3,2.7-9.8,6.5L2.8,22.8c-2.8,0.7-4.8,3.2-4.8,6.2v1.5c0,3.5,2.8,6.3,6.3,6.3h2.6c1,4.4,5,7.7,9.8,7.7s8.8-3.3,9.8-7.7 h50.5c1,4.4,5,7.7,9.8,7.7s8.8-3.3,9.8-7.7h2.6c3.5,0,6.3-2.8,6.3-6.3v-1.5C122,26,120,23.5,117.2,22.8z M21.3,38.5 c-3.5,0-6.3-2.8-6.3-6.3s2.8-6.3,6.3-6.3s6.3,2.8,6.3,6.3S24.8,38.5,21.3,38.5z M98.7,38.5c-3.5,0-6.3-2.8-6.3-6.3 s2.8-6.3,6.3-6.3s6.3,2.8,6.3,6.3S102.2,38.5,98.7,38.5z M74.7,21.5l-3.3-3.3c-0.6-0.6-1.5-0.6-2.1,0L54.4,33.1H31.5 c-0.8,0-1.5-0.7-1.5-1.5s0.7-1.5,1.5-1.5h19.2L65.6,15c1.2-1.2,2.8-1.8,4.5-1.8h21.7c3.1,0,5.8,2,6.9,4.8L74.7,21.5z"></path></svg>
-                                </div>
-                            </div>
-                            <p id="sim-feedback" class="text-center mt-4 text-lg font-semibold toxic-text h-6">Ajuste os controles para ver o resultado.</p>
-                        </div>
-                    `;
-
-                    for (const key in maxValues) {
-                        const slider = document.getElementById(key);
-                        slider.max = maxValues[key]; slider.min = 0;
-                        slider.value = userStandardValues[key];
-                    }
-                    
-                    document.getElementById('remap-setup').classList.add('hidden');
-                    remapPanelContainer.classList.remove('hidden');
-                    
-                    attachRemapPanelListeners();
-                    updateRemapValues();
-                });
-            }
-            
-            function attachRemapPanelListeners() {
-                document.getElementById('back-to-setup').addEventListener('click', () => {
-                    remapPanelContainer.classList.add('hidden');
-                    document.getElementById('remap-setup').classList.remove('hidden');
-                });
-
-                document.querySelectorAll('.remap-slider').forEach(slider => slider.addEventListener('input', updateRemapValues));
-                
-                document.getElementById('reset-remap').addEventListener('click', () => {
-                    for (const key in userStandardValues) {
-                        document.getElementById(key).value = userStandardValues[key];
-                    }
-                    updateRemapValues();
-                });
-            }
-
-            function updateRemapValues() {
-                document.querySelectorAll('.remap-slider').forEach(slider => {
-                    document.getElementById(`${slider.id}-value`).textContent = slider.value;
-                });
-                updateSimulation();
-            }
-
-            function updateSimulation() {
-                const torque = parseFloat(document.getElementById('torque').value);
-                const aceleracao = parseFloat(document.getElementById('aceleracao').value);
-                const angulo = parseInt(document.getElementById('angulo').value);
-                const aderencia = parseFloat(document.getElementById('aderencia').value);
-                const frenagem = parseFloat(document.getElementById('frenagem').value);
-                const simCar = document.getElementById('sim-car');
-                const road = document.getElementById('car-road');
-                const simFeedback = document.getElementById('sim-feedback');
-
-                const powerScore = (torque / maxValues.torque * 0.4) + (aceleracao / maxValues.aceleracao * 0.6);
-                const idealAngle = userStandardValues.angulo + 10;
-                const angleScore = 1 - Math.min(1, Math.abs(angulo - idealAngle) / 30);
-                const idealAdherence = userStandardValues.aderencia + 0.3;
-                const adherenceScore = 1 - Math.min(1, Math.abs(aderencia - idealAdherence) / 2);
-                const brakeScore = frenagem / maxValues.frenagem;
-                const controlScore = (angleScore * 0.5) + (adherenceScore * 0.4) + (brakeScore * 0.1);
-
-                road.style.animationDuration = `${Math.max(0.2, 1.5 - powerScore * 1.3)}s`;
-                const isUnstable = (controlScore < 0.65 && powerScore > 0.5) || (angulo > userStandardValues.angulo + 25 && powerScore > 0.7);
-                simCar.classList.toggle('skidding', isUnstable);
-
-                let feedbackText = "";
-                if (angulo > userStandardValues.angulo + 25 && powerScore > 0.7) feedbackText = "PERIGO: Risco de capotar em alta velocidade!";
-                else if (aderencia < userStandardValues.aderencia * 0.7) feedbackText = "Carro 'sabão'! Sem aderência nenhuma.";
-                else if (angulo < userStandardValues.angulo * 0.8) feedbackText = "Direção dura, o carro quase não vira.";
-                else if (frenagem < userStandardValues.frenagem * 0.7) feedbackText = "Frenagem perigosa, distância muito longa!";
-                else if (powerScore > 0.8 && controlScore < 0.7) feedbackText = "Muita potência, pouco controle. Cuidado!";
-                else if (powerScore > 0.9 && controlScore > 0.85) feedbackText = "Performance de corrida otimizada!";
-                else if (powerScore > 0.7) feedbackText = "Boa combinação de potência e controle.";
-                else if (powerScore < 0.4) feedbackText = "Motor fraco, resposta lenta.";
-                else if (controlScore > 0.9 && powerScore < 0.5) feedbackText = "Extremamente estável, mas lento. Parece um tanque.";
-                else feedbackText = "Configuração balanceada.";
-                simFeedback.textContent = feedbackText;
-            }
-
-            // --- Lógica da Calculadora ---
-            const webhookUrl = 'https://discord.com/api/webhooks/1413591886672695427/-p2P4rFlRFu6cq9afe8wtLOC1enxtRMr8TB01PGM4-RWIzbNEgfOrtzVDjkf2xi5qehh';
-            let currentTotal = 0; // Variável para armazenar o total numérico
-            const services = {
-                performance: [
-                    { id: 'full_tuning', name: 'Full Tuning', price: 350000, partnerPrice: 300000, includes: ['motor', 'transmissao', 'suspensao', 'freio', 'turbo'] },
-                    { id: 'motor', name: 'Motor', type: 'select', options: [{name: 'Nível 1', price: 20000}, {name: 'Nível 2', price: 40000}, {name: 'Nível 3', price: 80000}, {name: 'Nível 4', price: 100000}], discount: true },
-                    { id: 'transmissao', name: 'Transmissão', type: 'select', options: [{name: 'Nível 1', price: 60000}, {name: 'Nível 2', price: 80000}, {name: 'Nível 3', price: 100000}], discount: true },
-                    { id: 'suspensao', name: 'Suspensão', type: 'select', options: [{name: 'Nível 1', price: 20000}, {name: 'Nível 2', price: 40000}, {name: 'Nível 3', price: 80000}, {name: 'Nível 4', price: 100000}], discount: true },
-                    { id: 'freio', name: 'Freio', type: 'select', options: [{name: 'Nível 1', price: 20000}, {name: 'Nível 2', price: 60000}, {name: 'Nível 3', price: 80000}], discount: true },
-                    { id: 'turbo', name: 'Turbo', price: 50000, discount: true },
-                    { id: 'remap_servico', name: 'Remap', price: 500000, partnerPrice: 400000 },
-                    { id: 'suspensao_ar', name: 'Suspensão a AR', price: 1000000, partnerPrice: 750000 },
-                ],
-                seguranca: [
-                    { id: 'full_blindagem', name: 'Full Blindagem', price: 1500000, partnerPrice: 1300000, includes: ['blindagem_item', 'pneu_blindado'] },
-                    { id: 'blindagem_item', name: 'Blindagem', price: 600000, discount: true },
-                    { id: 'pneu_blindado', name: 'Blindagem de Pneu', price: 900000, discount: true },
-                    { id: 'rastreador', name: 'Rastreador', price: 2000000, partnerPrice: 1500000, noDiscount: true },
-                ],
-                estetica: [
-                    { id: 'neon', name: 'Neon', price: 25000, discount: true },
-                    { id: 'xenon', name: 'Xenon', price: 25000, discount: true },
-                    { id: 'cor_neon', name: 'Cor do Neon', price: 15000, discount: true },
-                    { id: 'cor_xenon', name: 'Cor do Xenon', price: 15000, discount: true },
-                    ...['Aerofólio', 'Buzina', 'Capô', 'Escapamento', 'Grade', 'Parachoque Dianteiro', 'Parachoque Traseiro', 'Pintura', 'Perolado', 'Cor do Painel', 'Cor da Roda', 'Cor do Interior', 'Pelicula', 'Saia Lateral', 'Paralama', 'Teto', 'Placa'].map(name => ({ id: name.toLowerCase().replace(/ /g, '_'), name, price: 10000, discount: true }))
-                ],
-                extra_estetica: [
-                    { id: 'paralama_direito', name: 'Paralamas Direito', price: 10000, discount: true },
-                    { id: 'paralama_esquerdo', name: 'Paralamas Esquerdo', price: 10000, discount: true },
-                    { id: 'spoiler', name: 'Spoiler', price: 10000, discount: true },
-                    { id: 'adesivo', name: 'Adesivo', price: 10000, discount: true },
-                    { id: 'extras', name: 'Extras', price: 10000, discount: true },
-                ]
-            };
-            const allServices = Object.values(services).flat();
-
-            const servicesListContainer = document.getElementById('services-list');
-            const extraAestheticsContainer = document.getElementById('extra-aesthetics-list');
-
-            ['performance', 'seguranca', 'estetica'].forEach(category => {
-                const title = document.createElement('h3');
-                title.className = 'text-xl font-bold toxic-text mt-6 first:mt-0 capitalize';
-                title.textContent = category.replace('_', ' de ');
-                servicesListContainer.appendChild(title);
-                const grid = document.createElement('div');
-                grid.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4';
-                services[category].forEach(service => {
-                    let itemHTML = '';
-                    if (service.type === 'select') {
-                        itemHTML = `
-                            <div class="flex flex-col">
-                                <label for="service-${service.id}" class="mb-1 text-gray-300">${service.name}</label>
-                                <select id="service-${service.id}" data-id="${service.id}" class="service-item w-full bg-gray-800/50 border border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-1 focus:ring-green-500">
-                                    <option value="0">Não selecionado</option>
-                                    ${service.options.map(opt => `<option value="${opt.price}">${opt.name} - ${formatCurrency(opt.price)}</option>`).join('')}
-                                </select>
-                            </div>
-                        `;
-                    } else {
-                         itemHTML = `
-                            <div class="bg-gray-800/50 p-3 rounded-lg flex items-center justify-between">
-                                <label for="service-${service.id}" class="flex-1 cursor-pointer">${service.name}</label>
-                                <input type="checkbox" id="service-${service.id}" data-id="${service.id}" class="service-item form-checkbox h-5 w-5 text-green-500 bg-gray-700 border-gray-600 rounded focus:ring-green-500">
-                            </div>
-                        `;
-                    }
-                    grid.innerHTML += itemHTML;
-                });
-                servicesListContainer.appendChild(grid);
-            });
-
-            services.extra_estetica.forEach(service => {
-                const itemHTML = `
-                    <div class="bg-gray-800/50 p-3 rounded-lg flex items-center justify-between">
-                        <label for="service-${service.id}" class="flex-1 cursor-pointer">${service.name}</label>
-                        <input type="checkbox" id="service-${service.id}" data-id="${service.id}" class="service-item form-checkbox h-5 w-5 text-green-500 bg-gray-700 border-gray-600 rounded focus:ring-green-500">
+            <div class="bg-slate-800/60 p-5 rounded-xl border border-[#cba871]/30 shadow-sm hover:border-[#cba871]/50 transition-colors">
+                <h2 class="text-[#cba871] font-bold text-xl mb-4 flex items-center gap-2"><i class="fa-solid fa-user"></i> Dados Pessoais</h2>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">NOME COMPLETO</label>
+                    <input type="text" id="input-porte-nome" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none uppercase hover:border-slate-500 transition-all">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">PASSAPORTE (CPF)</label>
+                        <input type="text" id="input-porte-passaporte" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all">
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">DATA DE NASCIMENTO</label>
+                        <input type="text" id="input-porte-nasc" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="DD/MM/AAAA">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">TELEFONE</label>
+                        <input type="text" id="input-porte-tel" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="XXX-XXX">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">ESTADO CIVIL</label>
+                        <select id="input-porte-civil" onchange="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none uppercase hover:border-slate-500 transition-all">
+                            <option value="Solteiro(a)">Solteiro(a)</option>
+                            <option value="Casado(a)">Casado(a)</option>
+                            <option value="Divorciado(a)">Divorciado(a)</option>
+                            <option value="Viúvo(a)">Viúvo(a)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/60 p-5 rounded-xl border border-slate-600/50 shadow-sm hover:border-slate-500 transition-colors">
+                <h2 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-list-check text-slate-400"></i> Informações Complementares</h2>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">PROFISSÃO ATUAL</label>
+                    <input type="text" id="input-porte-profissao" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none uppercase hover:border-slate-500 transition-all" placeholder="Ex: Líder Mecânica">
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">Nº FILHOS</label>
+                        <input type="number" min="0" id="input-porte-filhos" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">CASAS</label>
+                        <input type="number" min="0" id="input-porte-casas" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">CARROS</label>
+                        <input type="number" min="0" id="input-porte-carros" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" value="0">
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">RENDA MENSAL (R$)</label>
+                    <input type="number" min="0" id="input-porte-salario" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="Ex: 10000">
+                </div>
+            </div>
+
+            <div class="bg-slate-800/60 p-5 rounded-xl border border-[#cba871]/30 shadow-sm hover:border-[#cba871]/50 transition-colors">
+                <h2 class="text-[#cba871] font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-signature"></i> Assinatura (Autoridade)</h2>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">NOME DA AUTORIDADE EMISSORA</label>
+                    <input type="text" id="input-porte-adv-nome" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="Ex: Vitor Lazerri">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">CARGO</label>
+                        <input type="text" id="input-porte-adv-cargo" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="Ex: Advogado Sênior">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">Nº DA OAB</label>
+                        <input type="text" id="input-porte-adv-oab" oninput="updatePorteDoc()" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all" placeholder="Ex: FMA6Y4JE">
+                    </div>
+                </div>
+                
+                <label class="block text-xs font-semibold text-indigo-400 mb-1 mt-5 tracking-wider flex items-center gap-1.5"><i class="fa-brands fa-discord"></i> WEBHOOK (DISCORD)</label>
+                <input type="password" id="input-webhook-porte" value="https://discord.com/api/webhooks/1492636062592274442/c3fsqPnSm4VACNr351knOcBLGl8a9uxtmD3gFLNDHCkNY0G0CJWTFXOHX88aZX5s7Pzj" class="w-full bg-slate-900/80 border border-indigo-500/50 rounded-lg px-4 py-2.5 text-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none hover:border-indigo-400/80 transition text-xs">
+            </div>
+
+            <div class="flex flex-col gap-4 mb-8 lg:mb-4">
+                <button onclick="downloadPDF('documento-pdf-porte', 'btn-pdf-porte', 'PORTE')" id="btn-pdf-porte" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm border border-slate-500 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95">
+                    <i class="fa-solid fa-download"></i> BAIXAR ENCAMINHAMENTO (PDF)
+                </button>
+                <button onclick="enviarDiscordPorte()" id="btn-discord-porte" class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-lg py-4 rounded-xl shadow-[0_4px_15px_rgba(88,101,242,0.4)] hover:shadow-[0_6px_20px_rgba(88,101,242,0.6)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 active:scale-95">
+                    <i class="fa-brands fa-discord text-xl"></i> ENVIAR PARA O DISCORD
+                </button>
+            </div>
+        </aside>
+
+        <main class="w-full lg:flex-1 bg-gray-300 overflow-y-visible lg:overflow-y-auto p-4 lg:p-8 flex justify-center items-start min-h-[600px] shadow-inner custom-scrollbar" id="preview-area-porte">
+            <div id="documento-pdf-porte" class="a4-container p-10 flex flex-col bg-white text-black justify-between relative z-0">
+                
+                <div>
+                    <!-- CABEÇALHO TRIBUNAL DE JUSTIÇA -->
+                    <div class="w-full text-center pb-4 mb-6">
+                        <div class="border-t-[1.5px] border-black pt-5 mb-4 mx-auto w-full"></div>
+                        <img src="https://i.imgur.com/DPg5b1B.png" crossorigin="anonymous" alt="Judiciário" class="h-[70px] mx-auto mb-3 drop-shadow-sm opacity-90">
+                        <h2 class="font-bold text-[0.8rem] italic uppercase mt-1">- Poder Judiciário do Estado -</h2>
+                        <h1 class="font-bold text-lg uppercase tracking-wide">Tribunal de Justiça</h1>
+                        <div class="text-xs tracking-[0.2em] mb-4 text-gray-500">******************************</div>
+                        <h2 class="font-bold text-md uppercase tracking-wider mt-2">Encaminhamento para Avaliação Psicológica</h2>
+                        <div class="border-t-[1.5px] border-black mt-5 mx-auto w-full"></div>
+                    </div>
+
+                    <!-- TEXTO INTRODUTÓRIO -->
+                    <p class="text-justify text-[0.85rem] mb-4 leading-relaxed">
+                        O <strong>PODER JUDICIÁRIO DO BRASIL RP</strong>, por intermédio deste ato administrativo, ENCAMINHA o(a) cidadão(ã) abaixo identificado(a) para realização de <strong>AVALIAÇÃO PSICOLÓGICA</strong>, etapa obrigatória e indispensável ao processo administrativo de concessão de porte de arma de fogo, nos termos das normas internas vigentes.
+                    </p>
+
+                    <!-- TABELA 1: DADOS PESSOAIS -->
+                    <h3 class="font-bold uppercase text-[0.85rem] mb-1">Dados Pessoais</h3>
+                    <table class="tj-table mb-4">
+                        <tr><td class="tj-label">Nome:</td><td id="doc-porte-nome">-</td></tr>
+                        <tr><td class="tj-label">CPF (ID):</td><td id="doc-porte-passaporte">-</td></tr>
+                        <tr><td class="tj-label">Data de Nascimento:</td><td id="doc-porte-nasc">-</td></tr>
+                        <tr><td class="tj-label">Telefone:</td><td id="doc-porte-tel">-</td></tr>
+                        <tr><td class="tj-label">Estado Civil:</td><td id="doc-porte-civil">Solteiro(a)</td></tr>
+                        <tr><td class="tj-label">Filhos:</td><td id="doc-porte-filhos">0</td></tr>
+                    </table>
+
+                    <!-- TABELA 2: INFORMAÇÕES COMPLEMENTARES -->
+                    <h3 class="font-bold uppercase text-[0.85rem] mb-1">Informações Complementares</h3>
+                    <table class="tj-table mb-4">
+                        <tr><td class="tj-label">Situação Residencial:</td><td id="doc-porte-casas">Não informado</td></tr>
+                        <tr><td class="tj-label">Veículos Registrados:</td><td id="doc-porte-carros">0 veículos</td></tr>
+                        <tr><td class="tj-label">Profissão Atual:</td><td id="doc-porte-profissao">-</td></tr>
+                        <tr><td class="tj-label">Renda Declarada:</td><td id="doc-porte-salario">R$ 0,00</td></tr>
+                        <tr><td class="tj-label">Declaração de Imposto:</td><td id="doc-porte-ir">Não apresentada</td></tr>
+                    </table>
+
+                    <!-- TABELA 3: ANTECEDENTES (AGORA FECHADA CORRETAMENTE) -->
+                    <h3 class="font-bold uppercase text-[0.85rem] mb-1">Antecedentes Criminais</h3>
+                    <table class="tj-table">
+                        <tr><td class="tj-label">Passagens:</td><td>não possui</td></tr>
+                    </table>
+                </div>
+
+                <div>
+                    <!-- ÁREA DE ASSINATURA -->
+                    <div class="mt-4 flex flex-col items-center justify-center w-full">
+                        <span class="assinatura-font text-4xl text-black" style="transform: rotate(-2deg);" id="doc-porte-adv-assinatura"></span>
+                        <div class="border-t border-gray-400 w-[45%] mx-auto mt-2 pt-1 text-center">
+                            <span class="block text-[0.7rem] italic text-gray-700" id="doc-porte-adv-cargo-rodape">Assinatura do Advogado</span>
+                            <span class="block text-[0.7rem] font-bold mt-0.5" id="doc-porte-adv-nome-rodape">Nome - OAB: ID</span>
+                            <span class="block text-[0.7rem] italic mt-0.5" id="doc-porte-data-extenso"></span>
+                        </div>
+                    </div>
+
+                    <!-- RODAPÉ COM LOGOS (DIMINUÍDOS E ALINHADOS) -->
+                    <div class="mt-8 flex items-end justify-center gap-12 pb-2">
+                        <img src="https://i.imgur.com/7NDAXqU.png" crossorigin="anonymous" alt="Brasil RP" class="h-10 opacity-90 grayscale">
+                        <img src="https://i.imgur.com/mLampIb.png" crossorigin="anonymous" alt="OAB" class="h-10 opacity-90 grayscale">
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== ABA 3: CALCULADORA ==================== -->
+    <div id="view-calc" class="hidden flex-col lg:flex-row flex-1 overflow-hidden bg-slate-900 p-4 lg:p-8 gap-4 lg:gap-8">
+        
+        <!-- COLUNA 1: CRIMES -->
+        <div class="w-full lg:w-1/2 flex flex-col bg-slate-800 rounded-xl border border-slate-700 shadow-xl overflow-hidden h-[50vh] lg:h-full shrink-0 lg:shrink">
+            <div class="p-5 border-b border-slate-700 bg-slate-800/80">
+                <h2 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-book-journal-whills text-[#cba871]"></i> Código Penal</h2>
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                    <input type="text" id="crimeSearchInput" placeholder="Buscar artigo ou descrição..." class="w-full bg-slate-900 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-sm text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none transition-all shadow-inner">
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-3 custom-scrollbar" id="crimes-container"></div>
+        </div>
+
+        <!-- COLUNA 2: RESULTADOS E FORMULÁRIO -->
+        <div class="w-full lg:w-1/2 flex flex-col gap-6 overflow-y-auto custom-scrollbar pb-8 lg:pb-0 pr-2 h-[50vh] lg:h-full">
+            
+            <!-- ALERTA DE ERRO (0 MESES) -->
+            <div id="alerta-0-meses" class="hidden bg-red-900/40 border border-red-500/50 rounded-xl p-4 shadow-lg flex items-center gap-4 animate-pulse shrink-0">
+                <i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl"></i>
+                <div>
+                    <h4 class="text-red-500 font-bold text-sm uppercase tracking-wide">Ação Bloqueada</h4>
+                    <p class="text-slate-300 text-xs mt-1">Prisões computadas apenas com crimes de 0 meses (agravantes) não devem prosseguir sozinhas. Selecione um crime principal.</p>
+                </div>
+            </div>
+
+            <!-- DADOS DA PRISÃO -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-xl flex flex-col gap-5 shrink-0">
+                <h3 class="text-[#cba871] font-bold text-lg border-b border-slate-700 pb-2 tracking-wide"><i class="fa-solid fa-address-card"></i> Dados da Prisão</h3>
+                
+                <!-- MDT Drag and Drop -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-2 tracking-wider">IMAGEM DO MDT (COLE COM CTRL+V, ARRASTE OU CLIQUE)</label>
+                    <div id="mdt-dropzone" class="dropzone w-full h-24 rounded-lg bg-slate-900/80 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                        <input type="file" id="mdt-file-input" class="hidden" accept="image/*">
+                        <div id="mdt-placeholder" class="text-slate-500 flex flex-col items-center group-hover:text-slate-300 transition-colors">
+                            <i class="fa-solid fa-image text-2xl mb-1"></i>
+                            <span class="text-xs font-semibold">Anexar Imagem</span>
+                        </div>
+                        <img id="mdt-preview" class="hidden absolute inset-0 w-full h-full object-cover opacity-80" alt="Preview MDT">
+                        <button id="mdt-remove" class="hidden absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                </div>
+
+                <!-- Dados Infrator e Oficiais -->
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">NOME DO INFRATOR</label>
+                        <input type="text" id="calc-infrator-nome" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2 text-white focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none uppercase hover:border-slate-500 transition-all" placeholder="NOME DO PRESO">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">POLICIAIS ENVOLVIDOS</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="calc-policial-nome" class="w-2/3 bg-slate-900/80 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-[#cba871] focus:outline-none uppercase" placeholder="NOME">
+                            <input type="text" id="calc-policial-id" class="w-1/3 bg-slate-900/80 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-[#cba871] focus:outline-none" placeholder="ID/PASSAPORTE">
+                            <button onclick="adicionarPolicial()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div id="lista-policiais" class="flex flex-wrap gap-2 empty:hidden mt-2"></div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">DESCRIÇÃO DO OCORRIDO</label>
+                        <textarea id="calc-descricao" rows="2" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm focus:border-[#cba871] focus:ring-2 focus:ring-[#cba871]/20 focus:outline-none hover:border-slate-500 transition-all resize-none" placeholder="Breve relato..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Advogado e Acompanhantes -->
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 mt-2">
+                    <h4 class="text-[#cba871] font-bold text-sm mb-4 tracking-wide flex items-center gap-2"><i class="fa-solid fa-user-tie"></i> Defesa Legal</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">NOME DO ADVOGADO</label>
+                            <input type="text" id="calc-advogado-nome" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-[#cba871] focus:outline-none transition-all disabled:opacity-30 disabled:cursor-not-allowed uppercase" placeholder="Nome">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">PASSAPORTE / OAB</label>
+                            <input type="text" id="calc-advogado-id" class="w-full bg-slate-900/80 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-[#cba871] focus:outline-none transition-all disabled:opacity-30 disabled:cursor-not-allowed" placeholder="ID">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 tracking-wider">ACOMPANHANTES / ESTAGIÁRIOS (Opcional)</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="calc-acomp-nome" class="w-2/3 bg-slate-900/80 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-[#cba871] focus:outline-none uppercase disabled:opacity-30 disabled:cursor-not-allowed" placeholder="NOME">
+                            <input type="text" id="calc-acomp-id" class="w-1/3 bg-slate-900/80 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-[#cba871] focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed" placeholder="PASSAPORTE">
+                            <button id="btn-add-acomp" onclick="adicionarAcompanhante()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div id="lista-acompanhantes" class="flex flex-wrap gap-2 empty:hidden mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BALANÇO PENAL -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-xl transition-all duration-300 shrink-0">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                    <h3 class="text-[#cba871] font-bold text-lg tracking-wide"><i class="fa-solid fa-scale-unbalanced"></i> Balanço Penal</h3>
+                    <span id="badge-status-pena" class="bg-slate-700 text-slate-300 text-xs px-2 py-1 rounded font-bold uppercase tracking-wider">AGUARDANDO CRIMES</span>
+                </div>
+
+                <!-- Crimes Selecionados -->
+                <ul id="selected-crimes-list" class="space-y-2 mb-5 empty:hidden text-sm max-h-60 overflow-y-auto pr-2 custom-scrollbar"></ul>
+                <div id="empty-crimes" class="text-slate-500 text-sm italic text-center py-4 bg-slate-900/50 rounded-lg border border-slate-700 border-dashed mb-5">Nenhum crime selecionado.</div>
+
+                <!-- Atenuantes e Reduções -->
+                <div class="bg-slate-900/80 rounded-lg border border-slate-700 p-4 mb-5">
+                    <label class="block text-xs font-semibold text-[#cba871] mb-3 tracking-wider uppercase"><i class="fa-solid fa-tags"></i> Reduções Aplicáveis (Apenas na Pena)</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="red-advogado" checked onchange="updateCalculadoraUI()" class="w-4 h-4 accent-[#cba871] rounded bg-slate-700 border-slate-600">
+                            <span class="text-sm text-slate-300 group-hover:text-white transition-colors">Advogado Constituído</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="red-primario" onchange="updateCalculadoraUI()" class="w-4 h-4 accent-[#cba871] rounded bg-slate-700 border-slate-600">
+                            <span class="text-sm text-slate-300 group-hover:text-white transition-colors">Réu Primário (-20%)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="red-confesso" onchange="updateCalculadoraUI()" class="w-4 h-4 accent-[#cba871] rounded bg-slate-700 border-slate-600">
+                            <span class="text-sm text-slate-300 group-hover:text-white transition-colors">Réu Confesso (-20%)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="red-fianca" onchange="updateCalculadoraUI()" class="w-4 h-4 accent-[#cba871] rounded bg-slate-700 border-slate-600">
+                            <span class="text-sm text-slate-300 group-hover:text-white transition-colors">Fiança Paga (-100%)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Totais -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 shadow-inner flex flex-col justify-center">
+                        <span class="text-slate-400 text-[0.65rem] font-bold uppercase tracking-wider">Multa Total</span>
+                        <div class="text-2xl font-bold text-red-400 mt-1 truncate" id="calc-valor-multa">R$ 0</div>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-[#cba871]/50 relative overflow-hidden shadow-inner flex flex-col justify-center">
+                        <span class="text-[#cba871] text-[0.65rem] font-bold uppercase tracking-wider relative z-10 flex justify-between">Pena Final <span id="calc-pena-original" class="line-through text-slate-500 text-[0.6rem]">0 meses</span></span>
+                        <div class="text-3xl font-bold text-[#cba871] mt-1 relative z-10 truncate" id="calc-valor-pena">0 Meses</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="flex flex-col gap-3 shrink-0">
+                <button onclick="copiarResumoCalc()" id="btn-copiar-calc" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm border border-slate-500 shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
+                    <i class="fa-solid fa-copy"></i> COPIAR RESUMO PARA ÁREA DE TRANSFERÊNCIA
+                </button>
+                <button onclick="enviarDiscordCalc()" id="btn-discord-calc" class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[0.95rem] py-4 rounded-xl shadow-[0_4px_15px_rgba(88,101,242,0.4)] hover:shadow-[0_6px_20px_rgba(88,101,242,0.6)] hover:-translate-y-0.5 transition-all flex justify-center gap-3 active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
+                    <i class="fa-brands fa-discord text-xl"></i> ENVIAR RELATÓRIO PARA O DISCORD
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ==================== LÓGICA DE ABAS ====================
+        function switchTab(tab) {
+            document.getElementById('view-cnpj').classList.add('hidden');
+            document.getElementById('view-cnpj').classList.remove('flex');
+            document.getElementById('view-calc').classList.add('hidden');
+            document.getElementById('view-calc').classList.remove('flex');
+            document.getElementById('view-porte').classList.add('hidden');
+            document.getElementById('view-porte').classList.remove('flex');
+            
+            document.getElementById('tab-cnpj').classList.remove('active');
+            document.getElementById('tab-calc').classList.remove('active');
+            document.getElementById('tab-porte').classList.remove('active');
+
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.getElementById(`view-${tab}`).classList.add('flex');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            if(tab === 'cnpj') ajustarEscala('preview-area', 'documento-pdf');
+            if(tab === 'porte') ajustarEscala('preview-area-porte', 'documento-pdf-porte');
+        }
+
+        function formatBRL(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }); }
+        
+        function getDataExtenso() {
+            const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            const hoje = new Date();
+            return `Cidade Brasil RP, ${hoje.getDate()} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}.`;
+        }
+
+        function ajustarEscala(wrapperId, docId) {
+            const wrapper = document.getElementById(wrapperId);
+            const doc = document.getElementById(docId);
+            if (!wrapper || !doc || wrapper.clientWidth === 0) return;
+            const availableWidth = wrapper.clientWidth - 32; /* Ajustado padding mobile */
+            const docWidth = 794; 
+            if (availableWidth < docWidth) {
+                const scale = availableWidth / docWidth;
+                doc.style.transform = `scale(${scale})`;
+                doc.style.marginBottom = `-${(1 - scale) * 1118}px`; 
+            } else {
+                doc.style.transform = 'scale(1)';
+                doc.style.marginBottom = '0';
+            }
+        }
+
+        function downloadPDF(docId, btnId, namePrefix) {
+            const element = document.getElementById(docId);
+            const btn = document.getElementById(btnId);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> GERANDO...';
+            btn.classList.add('loading-pdf');
+
+            const oldTransform = element.style.transform;
+            const oldMargin = element.style.marginBottom;
+            element.style.transform = 'scale(1)';
+            element.style.marginBottom = '0';
+
+            let nameTarget = namePrefix === 'CNPJ' ? document.getElementById('input-fantasia').value : document.getElementById('input-porte-nome').value;
+            let nomeStr = nameTarget.trim() || "DOCUMENTO";
+            const filename = `${namePrefix}_${nomeStr.replace(/\s+/g, '_').toUpperCase()}.pdf`;
+
+            html2pdf().set({
+                margin: [0, 0, 0, 0], filename: filename, image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 3, useCORS: true, logging: false }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(element).save().then(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('loading-pdf');
+                element.style.transform = oldTransform;
+                element.style.marginBottom = oldMargin;
+            });
+        }
+
+        // ==================== LÓGICA DO CNPJ ====================
+        function gerarCNPJ() {
+            const r = () => Math.floor(Math.random() * 10);
+            document.getElementById('input-cnpj').value = `${r()}${r()}.${r()}${r()}${r()}.${r()}${r()}${r()}/0001-${r()}${r()}`;
+            updateDoc();
+        }
+
+        function updateDoc() {
+            document.getElementById('doc-cnpj').innerText = document.getElementById('input-cnpj').value;
+            document.getElementById('doc-razao').innerText = document.getElementById('input-razao').value;
+            document.getElementById('doc-fantasia').innerText = document.getElementById('input-fantasia').value;
+            document.getElementById('doc-endereco').innerText = document.getElementById('input-endereco').value;
+            const cnaeSelect = document.getElementById('input-cnae');
+            if (cnaeSelect && cnaeSelect.selectedIndex > 0) document.getElementById('doc-cnae').innerText = cnaeSelect.value;
+            const natSelect = document.getElementById('input-natureza');
+            if (natSelect && natSelect.selectedIndex > 0) document.getElementById('doc-natureza').innerText = natSelect.value;
+
+            const repNome = document.getElementById('input-rep-nome').value;
+            document.getElementById('doc-rep-nome').innerText = repNome;
+            document.getElementById('doc-rep-assinatura').innerText = repNome; 
+            document.getElementById('doc-rep-cpf').innerText = document.getElementById('input-rep-cpf').value;
+            document.getElementById('doc-rep-data').innerText = document.getElementById('input-rep-data').value;
+
+            const advNome = document.getElementById('input-adv-nome').value;
+            document.getElementById('doc-adv-nome-rodape').innerText = advNome || 'NOME DO ADVOGADO';
+            document.getElementById('doc-adv-assinatura').innerText = advNome;
+            document.getElementById('doc-adv-id-rodape').innerText = document.getElementById('input-adv-id').value || '___';
+
+            const tipoRep = document.querySelector('input[name="tipo_rep"]:checked').value;
+            if(tipoRep === 'Representante') {
+                document.getElementById('box-rep').innerHTML = '<i class="fa-solid fa-xmark text-[12px]"></i>';
+                document.getElementById('box-pre').innerHTML = '';
+            } else {
+                document.getElementById('box-rep').innerHTML = '';
+                document.getElementById('box-pre').innerHTML = '<i class="fa-solid fa-xmark text-[12px]"></i>';
+            }
+        }
+
+        async function enviarDiscordCNPJ() {
+            const webhookUrl = document.getElementById('input-webhook').value.trim();
+            const btn = document.getElementById('btn-discord');
+            if(!webhookUrl) {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> INSIRA O WEBHOOK';
+                btn.classList.replace('bg-[#5865F2]', 'bg-red-600');
+                setTimeout(() => { btn.innerHTML = originalText; btn.classList.replace('bg-red-600', 'bg-[#5865F2]'); }, 3000);
+                return;
+            }
+
+            const element = document.getElementById('documento-pdf');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-xl"></i> ENVIANDO...';
+            btn.classList.add('loading-pdf');
+            const oldTransform = element.style.transform;
+            const oldMargin = element.style.marginBottom;
+            element.style.transform = 'scale(1)';
+            element.style.marginBottom = '0';
+
+            let nomeEmpresa = document.getElementById('input-fantasia').value.trim() || "EMPRESA";
+            const filename = `CNPJ_${nomeEmpresa.replace(/\s+/g, '_').toUpperCase()}.pdf`;
+            const advNome = document.getElementById('input-adv-nome').value.trim() || "NOME DO ADVOGADO";
+            const advId = document.getElementById('input-adv-id').value.trim() || "NÃO INFORMADA";
+            const cnpjNum = document.getElementById('input-cnpj').value;
+
+            try {
+                const pdfBlob = await html2pdf().set({
+                    margin: [0,0,0,0], filename: filename, image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { scale: 3, useCORS: true, logging: false }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(element).output('blob');
+
+                const formData = new FormData();
+                formData.append('payload_json', JSON.stringify({
+                    username: "Poder Judiciário", avatar_url: "https://i.imgur.com/DPg5b1B.png",
+                    content: `🏛️ **NOVO REGISTRO EMPRESARIAL EFETIVADO**\n\nO advogado **${advNome}** (OAB: **${advId}**) efetivou a entrada do CNPJ **${cnpjNum}**.\nEmpresa registrada: **${nomeEmpresa}**\n\nConfira os dados completos no documento anexado abaixo.`
+                }));
+                formData.append('file', pdfBlob, filename);
+
+                const response = await fetch(webhookUrl, { method: 'POST', body: formData });
+                if (response.ok) {
+                    btn.innerHTML = '<i class="fa-solid fa-check text-xl"></i> ENVIADO COM SUCESSO';
+                    btn.classList.replace('bg-[#5865F2]', 'bg-green-600');
+                } else throw new Error();
+            } catch (error) {
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xl"></i> ERRO AO ENVIAR';
+                btn.classList.replace('bg-[#5865F2]', 'bg-red-600');
+            } finally {
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('loading-pdf', 'bg-green-600', 'bg-red-600');
+                    btn.classList.add('bg-[#5865F2]');
+                }, 4000);
+                element.style.transform = oldTransform;
+                element.style.marginBottom = oldMargin;
+            }
+        }
+
+        // ==================== LÓGICA DO PORTE ====================
+        function updatePorteDoc() {
+            document.getElementById('doc-porte-nome').innerText = document.getElementById('input-porte-nome').value || '-';
+            document.getElementById('doc-porte-passaporte').innerText = document.getElementById('input-porte-passaporte').value || '-';
+            document.getElementById('doc-porte-nasc').innerText = document.getElementById('input-porte-nasc').value || '-';
+            document.getElementById('doc-porte-tel').innerText = document.getElementById('input-porte-tel').value || '-';
+            document.getElementById('doc-porte-civil').innerText = document.getElementById('input-porte-civil').value || 'Solteiro(a)';
+            document.getElementById('doc-porte-filhos').innerText = document.getElementById('input-porte-filhos').value || '0';
+            
+            let casas = parseInt(document.getElementById('input-porte-casas').value) || 0;
+            document.getElementById('doc-porte-casas').innerText = casas > 0 ? `${casas} imóvel(is) registrado(s)` : 'Aluguel / Casa Própria não informada';
+            let carros = parseInt(document.getElementById('input-porte-carros').value) || 0;
+            document.getElementById('doc-porte-carros').innerText = carros === 1 ? '1 veículo' : `${carros} veículos`;
+            document.getElementById('doc-porte-profissao').innerText = document.getElementById('input-porte-profissao').value || '-';
+
+            let salarioInput = document.getElementById('input-porte-salario').value;
+            let salarioNum = parseFloat(salarioInput.replace(/[^0-9,.]/g, '').replace(',', '.')) || 0;
+            document.getElementById('doc-porte-salario').innerText = formatBRL(salarioNum);
+            
+            if(salarioNum > 0) document.getElementById('doc-porte-ir').innerText = `Apresentada / Estimativa: ${formatBRL(salarioNum * 12)}`;
+            else document.getElementById('doc-porte-ir').innerText = "Não apresentada";
+            
+            const advNome = document.getElementById('input-porte-adv-nome').value || 'Nome do Advogado';
+            const advCargo = document.getElementById('input-porte-adv-cargo').value || 'Cargo';
+            const advOab = document.getElementById('input-porte-adv-oab').value || 'ID';
+            
+            document.getElementById('doc-porte-adv-assinatura').innerText = advNome !== 'Nome do Advogado' ? advNome : '';
+            document.getElementById('doc-porte-adv-cargo-rodape').innerText = `Assinatura do ${advCargo}`;
+            document.getElementById('doc-porte-adv-nome-rodape').innerText = `${advNome} - OAB: ${advOab}`;
+            document.getElementById('doc-porte-data-extenso').innerText = getDataExtenso();
+        }
+
+        async function enviarDiscordPorte() {
+            const webhookUrl = document.getElementById('input-webhook-porte').value.trim();
+            const btn = document.getElementById('btn-discord-porte');
+            if(!webhookUrl) {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> INSIRA O WEBHOOK';
+                btn.classList.replace('bg-[#5865F2]', 'bg-red-600');
+                setTimeout(() => { btn.innerHTML = originalText; btn.classList.replace('bg-red-600', 'bg-[#5865F2]'); }, 3000);
+                return;
+            }
+
+            const element = document.getElementById('documento-pdf-porte');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-xl"></i> ENVIANDO IMAGEM...';
+            btn.classList.add('loading-pdf');
+
+            const oldTransform = element.style.transform;
+            const oldMargin = element.style.marginBottom;
+            element.style.transform = 'scale(1)';
+            element.style.marginBottom = '0';
+
+            const cliNome = document.getElementById('input-porte-nome').value.trim() || "CIDADÃO";
+            const cliPass = document.getElementById('input-porte-passaporte').value.trim() || "NÃO INFORMADO";
+            const advNome = document.getElementById('input-porte-adv-nome').value.trim() || "NOME DO ADVOGADO";
+            const advId = document.getElementById('input-porte-adv-oab').value.trim() || "NÃO INFORMADA";
+            const filename = `PORTE_${cliNome.replace(/\s+/g, '_').toUpperCase()}.jpg`;
+
+            try {
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, allowTaint: true, logging: false });
+                const imgBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+
+                const formData = new FormData();
+                formData.append('payload_json', JSON.stringify({
+                    username: "Poder Judiciário", avatar_url: "https://i.imgur.com/DPg5b1B.png",
+                    content: `🏛️ **RESULTADO DE AVALIAÇÃO - PORTE DE ARMA**\n\n**Nome do Cliente:** ${cliNome}\n**Passaporte:** ${cliPass}\n**Processos e antecedentes:** NÃO POSSUI\n**Resultado Jurídico:** ✅ Aprovado\n\n**Advogado que acompanhou:** ${advNome}\n**OAB Advogado:** ${advId}\n\n📄 *Cópia do documento anexada abaixo.*`
+                }));
+                formData.append('file', imgBlob, filename);
+
+                const response = await fetch(webhookUrl, { method: 'POST', body: formData });
+                if (response.ok) {
+                    btn.innerHTML = '<i class="fa-solid fa-check text-xl"></i> ENVIADO COM SUCESSO';
+                    btn.classList.replace('bg-[#5865F2]', 'bg-green-600');
+                } else throw new Error();
+            } catch (error) {
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xl"></i> ERRO AO ENVIAR';
+                btn.classList.replace('bg-[#5865F2]', 'bg-red-600');
+            } finally {
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('loading-pdf', 'bg-green-600', 'bg-red-600');
+                    btn.classList.add('bg-[#5865F2]');
+                }, 4000);
+                element.style.transform = oldTransform;
+                element.style.marginBottom = oldMargin;
+            }
+        }
+
+        // ==================== LÓGICA CALCULADORA PENAL ====================
+        const codigoPenal = [
+            { id: 1, crime: "Ameaça", multa: 25000, meses: 20, description: "O ato de ameaçar alguém de causar-lhe mal injusto e grave." },
+            { id: 2, crime: "Apologia ao Crime", multa: 30000, meses: 30, description: "Promoção, defesa ou justificativa pública de crimes ou criminosos." },
+            { id: 3, crime: "Aviãozinho (6 a 100)", multa: 15000, meses: 20, description: "Porte de 6 a 100 unidades de itens ilícitos/drogas atuando como entregador." },
+            { id: 4, crime: "Calúnia, Injuria ou Difamação", multa: 10000, meses: 10, description: "Atribuir falsamente crime, ofender a dignidade ou ferir a reputação de outrem." },
+            { id: 5, crime: "Corrida Ilegal", multa: 50000, meses: 10, description: "Participar de corridas automobilísticas não autorizadas em vias públicas." },
+            { id: 6, crime: "Cúmplice", multa: 15000, meses: 0, description: "Ajudar, facilitar ou encobrir a prática de um crime." },
+            { id: 7, crime: "Dano ao patrimonio Publico", multa: 20000, meses: 15, description: "Destruir, inutilizar ou deteriorar bens e estruturas do Estado." },
+            { id: 8, crime: "Desacato 1", multa: 50000, meses: 20, description: "Faltar com o respeito ou ofender funcionário público no exercício da função (Nível Leve)." },
+            { id: 9, crime: "Desacato 2", multa: 50000, meses: 20, description: "Faltar com o respeito ou ofender funcionário público (Nível Médio)." },
+            { id: 10, crime: "Desacato 3", multa: 50000, meses: 20, description: "Faltar com o respeito, ofender ou agredir verbalmente funcionário público (Nível Grave)." },
+            { id: 11, crime: "Desobediencia 1", multa: 15000, meses: 0, description: "Desobedecer ordem legal de funcionário público (Nível Leve)." },
+            { id: 12, crime: "Desobediencia 2", multa: 15000, meses: 0, description: "Desobedecer ordem legal de funcionário público (Nível Médio)." },
+            { id: 13, crime: "Desobediencia 3", multa: 15000, meses: 10, description: "Desobedecer ordem legal de funcionário público (Nível Grave)." },
+            { id: 14, crime: "Dinheiro Sujo", multa: 100000, meses: 20, description: "Posse de dinheiro não declarado ou proveniente de atividades ilícitas." },
+            { id: 15, crime: "Falsa Comunicação de Crime", multa: 15000, meses: 10, description: "Provocar a ação da autoridade comunicando crime que não ocorreu." },
+            { id: 16, crime: "Falsidade Ideologica", multa: 40000, meses: 30, description: "Omitir ou inserir declaração falsa em documento para prejudicar direito ou alterar a verdade." },
+            { id: 17, crime: "Formação de Quadrilha", multa: 50000, meses: 20, description: "Associação de 3 ou mais pessoas para o fim de cometer crimes." },
+            { id: 18, crime: "Furto", multa: 15000, meses: 10, description: "Subtrair coisa alheia móvel para si ou para outrem sem uso de violência." },
+            { id: 19, crime: "Homicidio Culposo (sem intenção)", multa: 15000, meses: 20, description: "Matar alguém sem a intenção, por imprudência, negligência ou imperícia." },
+            { id: 20, crime: "Homicidio Doloso (Com intenção)", multa: 25000, meses: 40, description: "Matar alguém com a intenção clara e deliberada de tirar-lhe a vida." },
+            { id: 21, crime: "Lesão Corporal", multa: 15000, meses: 10, description: "Ofender a integridade corporal ou a saúde física de outrem." },
+            { id: 22, crime: "Porte de Arma em público", multa: 25000, meses: 10, description: "Exibir arma de fogo em vias públicas de forma ostensiva e intimidadora." },
+            { id: 23, crime: "Porte de Arma Branca", multa: 50000, meses: 0, description: "Portar facas, canivetes, machados ou similares fora de contexto de trabalho." },
+            { id: 24, crime: "Porte de Arma Leve", multa: 20000, meses: 20, description: "Portar armas de fogo de pequeno porte/calibre (pistolas, revólveres)." },
+            { id: 25, crime: "Porte de Arma Pesada", multa: 25000, meses: 25, description: "Portar armamento de grosso calibre ou de uso restrito (fuzis, submetralhadoras)." },
+            { id: 26, crime: "Porte de Capsulas", multa: 15000, meses: 10, description: "Posse de cápsulas deflagradas ou componentes para a fabricação de munição." },
+            { id: 27, crime: "Porte de Colete Balistico", multa: 10000, meses: 20, description: "Posse ou uso de colete à prova de balas sem a devida autorização legal." },
+            { id: 28, crime: "Porte de componentes narcoticos", multa: 10000, meses: 10, description: "Posse de insumos, sementes ou reagentes químicos para fabricação de entorpecentes." },
+            { id: 29, crime: "Porte de Drogas (1 a 5)", multa: 15000, meses: 0, description: "Posse de pequena quantidade de entorpecentes (1 a 5 unidades) para consumo próprio." },
+            { id: 30, crime: "Porte de Itens Munições -100", multa: 15000, meses: 20, description: "Posse de até 100 unidades de munições de qualquer calibre." },
+            { id: 31, crime: "Receptação de veiculo", multa: 20000, meses: 10, description: "Adquirir, receber, transportar ou ocultar veículo que sabe ser produto de crime." },
+            { id: 32, crime: "Resistencia a prisao", multa: 15000, meses: 10, description: "Opor-se à execução de ato legal ou abordagem mediante violência ou ameaça." },
+            { id: 33, crime: "Roubo", multa: 25000, meses: 10, description: "Subtrair coisa alheia móvel mediante grave ameaça ou violência à pessoa." },
+            { id: 34, crime: "Roubo de Caixa eletronico", multa: 30000, meses: 15, description: "Arrombamento, explosão ou violação de caixas eletrônicos para subtração de valores." },
+            { id: 35, crime: "Roubo de veiculo", multa: 20000, meses: 15, description: "Subtrair veículo alheio mediante grave ameaça ou violência contra o condutor." },
+            { id: 36, crime: "Sequestro", multa: 100000, meses: 30, description: "Privar alguém de sua liberdade mediante cárcere privado ou restrição forçada." },
+            { id: 37, crime: "Trafico de Armas +3", multa: 200000, meses: 30, description: "Posse, transporte ou comercialização de 3 ou mais armas de fogo." },
+            { id: 38, crime: "Trafico de Drogas +100", multa: 50000, meses: 25, description: "A partir de 101 unidades de drogas (cocaína, maconha, heroína, etc) configurando tráfico." },
+            { id: 39, crime: "Trafico de Munições+100", multa: 25000, meses: 25, description: "Comercialização, posse ou transporte de mais de 100 unidades de munição." },
+            { id: 40, crime: "Trafico de Itens Ilegais", multa: 30000, meses: 20, description: "Comercialização em larga escala de itens contrabandeados ou de circulação restrita." },
+            { id: 41, crime: "tentativa de fuga", multa: 50000, meses: 15, description: "Empreender fuga utilizando veículo ou a pé para evitar abordagem ou prisão policial." },
+            { id: 42, crime: "Tentativa de Roubo/Furto", multa: 25000, meses: 10, description: "Tentar subtrair bem alheio, não se consumando o ato por motivos alheios à vontade do agente." },
+            { id: 43, crime: "Tentativa de Homicidio", multa: 10000, meses: 25, description: "Tentar matar alguém, não ocorrendo a morte por circunstâncias alheias à vontade do agente." },
+            { id: 44, crime: "Tentaitva de Suborno", multa: 40000, meses: 25, description: "Oferecer ou prometer vantagem indevida a funcionário público para omitir ato de ofício." },
+            { id: 45, crime: "Randola Recrutamento", multa: 0, meses: 100, description: "Aliciar, coagir ou recrutar ativamente cidadãos para integrar organizações criminosas." }
+        ];
+
+        let selectedCrimesForCalc = [];
+        let oficiaisEnvolvidos = [];
+        let acompanhantesEnvolvidos = [];
+        let mdtImageFile = null;
+
+        function renderCrimes(filter = "") {
+            const container = document.getElementById('crimes-container');
+            container.innerHTML = '';
+            const search = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            
+            codigoPenal.forEach(crime => {
+                const searchStr = crime.crime.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                if(searchStr.includes(search)) {
+                    const isSelected = selectedCrimesForCalc.some(c => c.id === crime.id);
+                    const div = document.createElement('div');
+                    div.className = `crime-item p-4 mb-3 rounded-xl border ${isSelected ? 'selected' : 'border-slate-700/80 bg-slate-800/80'} flex justify-between items-center shadow-sm`;
+                    div.onclick = () => toggleCrime(crime);
+                    
+                    const mesesBadge = crime.meses === 0 
+                        ? `<span class="bg-red-900/50 text-red-400 text-[0.65rem] px-2 py-0.5 rounded font-bold uppercase tracking-wider">AGRAVANTE</span>`
+                        : `<span class="text-slate-400 text-[0.7rem]"><i class="fa-regular fa-clock"></i> ${crime.meses}m</span>`;
+
+                    div.innerHTML = `
+                        <div class="w-4/5 pr-2 flex flex-col gap-1.5">
+                            <h4 class="text-white font-bold text-sm tracking-wide leading-tight">${crime.crime}</h4>
+                            <p class="text-slate-400 text-[0.7rem] leading-snug">${crime.description}</p>
+                            <div class="flex items-center gap-3 mt-1">
+                                <span class="text-red-400 font-mono text-[0.75rem] font-bold">${formatBRL(crime.multa)}</span>
+                                ${mesesBadge}
+                            </div>
+                        </div>
+                        <div class="w-1/5 text-right flex items-center justify-end">
+                            ${isSelected ? `<i class="fa-solid fa-circle-check text-2xl text-[#cba871]"></i>` : `<i class="fa-regular fa-circle text-2xl text-slate-500"></i>`}
+                        </div>`;
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function toggleCrime(crime) {
+            const idx = selectedCrimesForCalc.findIndex(c => c.id === crime.id);
+            if(idx > -1) selectedCrimesForCalc.splice(idx, 1);
+            else selectedCrimesForCalc.push(crime);
+            renderCrimes(document.getElementById('crimeSearchInput').value);
+            updateCalculadoraUI();
+        }
+
+        document.getElementById('crimeSearchInput').addEventListener('input', (e) => { renderCrimes(e.target.value); });
+
+        function updateCalculadoraUI() {
+            const valMultaEl = document.getElementById('calc-valor-multa');
+            const valPenaEl = document.getElementById('calc-valor-pena');
+            const valPenaOriginal = document.getElementById('calc-pena-original');
+            const listEl = document.getElementById('selected-crimes-list');
+            const emptyEl = document.getElementById('empty-crimes');
+            const alerta0Meses = document.getElementById('alerta-0-meses');
+            const badgeStatus = document.getElementById('badge-status-pena');
+            
+            const btnCopy = document.getElementById('btn-copiar-calc');
+            const btnDiscord = document.getElementById('btn-discord-calc');
+            
+            // Lógica habilitar/desabilitar Advogados e Acompanhantes
+            const checkAdvogado = document.getElementById('red-advogado').checked;
+            const inputAdvNome = document.getElementById('calc-advogado-nome');
+            const inputAdvId = document.getElementById('calc-advogado-id');
+            const inputAcompNome = document.getElementById('calc-acomp-nome');
+            const inputAcompId = document.getElementById('calc-acomp-id');
+            const btnAddAcomp = document.getElementById('btn-add-acomp');
+
+            inputAdvNome.disabled = !checkAdvogado;
+            inputAdvId.disabled = !checkAdvogado;
+            inputAcompNome.disabled = !checkAdvogado;
+            inputAcompId.disabled = !checkAdvogado;
+            btnAddAcomp.disabled = !checkAdvogado;
+
+            if (!checkAdvogado) {
+                inputAdvNome.value = "";
+                inputAdvId.value = "";
+                acompanhantesEnvolvidos = [];
+                renderAcompanhantes();
+            }
+
+            listEl.innerHTML = '';
+
+            if (selectedCrimesForCalc.length === 0) {
+                valMultaEl.innerText = "R$ 0";
+                valPenaEl.innerText = "0 Meses";
+                valPenaOriginal.innerText = "0 meses";
+                emptyEl.classList.remove('hidden');
+                alerta0Meses.classList.add('hidden');
+                badgeStatus.innerText = "AGUARDANDO CRIMES";
+                badgeStatus.className = "bg-slate-700 text-slate-300 text-xs px-2 py-1 rounded font-bold uppercase tracking-wider";
+                btnCopy.disabled = true;
+                btnDiscord.disabled = true;
+                return;
+            }
+
+            emptyEl.classList.add('hidden');
+
+            let totalMulta = 0;
+            let totalMeses = 0;
+
+            selectedCrimesForCalc.forEach(crime => {
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center text-slate-300 border-b border-slate-700/50 pb-2 pt-1";
+                li.innerHTML = `
+                    <span class="w-3/5 truncate"><i class="fa-solid fa-gavel text-slate-500 mr-2"></i> ${crime.crime}</span>
+                    <span class="w-2/5 text-right font-mono text-xs text-slate-400">${formatBRL(crime.multa)} | ${crime.meses}m</span>
                 `;
-                extraAestheticsContainer.innerHTML += itemHTML;
-            });
-            
-            function formatCurrency(value) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
+                listEl.appendChild(li);
 
-            function handleServiceDependencies() {
-                allServices.filter(s => s.includes).forEach(pkg => {
-                    const pkgCheckbox = document.getElementById(`service-${pkg.id}`);
-                    const isChecked = pkgCheckbox.checked;
-                    pkg.includes.forEach(childId => {
-                        const childEl = document.getElementById(`service-${childId}`);
-                        if (childEl) {
-                            if (childEl.tagName === 'SELECT') {
-                                if (isChecked) childEl.selectedIndex = childEl.options.length - 1;
-                                childEl.disabled = isChecked;
-                            } else {
-                                childEl.checked = isChecked;
-                                childEl.disabled = isChecked;
-                            }
-                        }
-                    });
-                });
-                calculateTotal();
+                totalMulta += crime.multa;
+                totalMeses += crime.meses;
+            });
+
+            valMultaEl.innerText = formatBRL(totalMulta);
+            valPenaOriginal.innerText = `${totalMeses} meses`;
+
+            // Lógica de 0 Meses (Agravantes Isolados)
+            if (totalMeses === 0) {
+                valPenaEl.innerText = "BLOQUEADO";
+                alerta0Meses.classList.remove('hidden');
+                badgeStatus.innerText = "SÓ AGRAVANTES!";
+                badgeStatus.className = "bg-red-600 text-white text-xs px-2 py-1 rounded font-bold uppercase tracking-wider";
+                btnCopy.disabled = true;
+                btnDiscord.disabled = true;
+                return;
             }
 
-            function calculateTotal() {
-                let total = 0;
-                const isPartner = document.getElementById('partner-check').checked;
-                
-                document.querySelectorAll('.service-item').forEach(item => {
-                    let price = 0;
-                    const serviceId = item.dataset ? item.dataset.id : null;
-                    const service = allServices.find(s => s.id === serviceId);
+            alerta0Meses.classList.add('hidden');
+            btnCopy.disabled = false;
+            btnDiscord.disabled = false;
 
-                    if (!service) return;
+            // Cálculos de Redução
+            let reducaoPercentual = 0;
+            const checkPrimario = document.getElementById('red-primario').checked;
+            const checkConfesso = document.getElementById('red-confesso').checked;
+            const checkFianca = document.getElementById('red-fianca').checked;
 
-                    if (item.tagName === 'SELECT' && item.value !== '0') {
-                        price = parseFloat(item.value);
-                    } else if (item.tagName === 'INPUT' && item.type === 'checkbox' && item.checked) {
-                        price = service.price;
-                    }
-
-                    if (price > 0) {
-                        const isChildOfSelectedPackage = allServices.some(pkg => pkg.includes && pkg.includes.includes(service.id) && document.getElementById(`service-${pkg.id}`).checked);
-
-                        if (!isChildOfSelectedPackage) {
-                            if (isPartner) {
-                                if (service.partnerPrice) price = service.partnerPrice;
-                                else if (service.discount) price *= 0.90;
-                            }
-                            total += price;
-                        }
-                    }
-                });
-
-                const otherAestheticsCount = parseInt(document.getElementById('other-aesthetics-count').value) || 0;
-                let otherAestheticsPrice = otherAestheticsCount * 10000;
-                if (isPartner) {
-                    otherAestheticsPrice *= 0.90;
-                }
-                total += otherAestheticsPrice;
-                
-                currentTotal = total; // Armazena o valor numérico
-
-                document.getElementById('total-price').textContent = formatCurrency(total);
-                document.getElementById('discount-info').textContent = isPartner ? 'Desconto de parceiro aplicado!' : '';
-
-                // LÓGICA PARA EXIBIR VALOR DA MECÂNICA
-                const workshopName = document.getElementById('mec-name').value;
-                const shareSection = document.getElementById('mechanic-share-section');
-                const shareValueEl = document.getElementById('mechanic-share-value');
-
-                if (workshopName === 'Redline' || workshopName === 'Paleto Customs') {
-                    const mechanicShare = total * 0.20;
-                    shareValueEl.textContent = `${formatCurrency(mechanicShare)} (20%)`;
-                    shareSection.style.display = 'block';
-                } else {
-                    shareSection.style.display = 'none';
-                }
-            }
+            if (checkPrimario) reducaoPercentual += 0.20;
+            if (checkConfesso) reducaoPercentual += 0.20;
             
-            function resetCalculator() {
-                document.querySelectorAll('.service-item').forEach(item => {
-                    if (item.tagName === 'SELECT') item.selectedIndex = 0;
-                    else if (item.type === 'checkbox') item.checked = false;
-                    else if (item.type === 'number') item.value = '';
-                    item.disabled = false;
-                });
-                document.getElementById('mechanic-name-input').value = '';
-                document.getElementById('mec-name').value = '';
-                document.getElementById('client-id').value = '';
-                document.getElementById('partner-name').value = '';
-                document.getElementById('partner-check').checked = false;
-                document.getElementById('partner-name').classList.add('hidden');
-                document.getElementById('summary-output').value = '';
-                document.getElementById('redline-actions').classList.add('hidden');
-                calculateTotal();
+            let mesesFinais = Math.ceil(totalMeses * (1 - reducaoPercentual));
+            
+            if (checkFianca) {
+                mesesFinais = 0;
+                badgeStatus.innerText = "LIBERADO SOB FIANÇA";
+                badgeStatus.className = "bg-[#cba871] text-slate-900 text-xs px-2 py-1 rounded font-bold uppercase tracking-wider";
+            } else {
+                badgeStatus.innerText = "PRISÃO APLICADA";
+                badgeStatus.className = "bg-red-600 text-white text-xs px-2 py-1 rounded font-bold uppercase tracking-wider";
             }
 
-            document.querySelectorAll('.service-item').forEach(item => item.addEventListener('change', handleServiceDependencies));
-            document.getElementById('partner-check').addEventListener('change', calculateTotal);
-            document.getElementById('other-aesthetics-count').addEventListener('input', calculateTotal);
+            valPenaEl.innerText = `${mesesFinais} Meses`;
+        }
 
-            // --- Listener atualizado para o seletor de mecânica ---
-            const mecNameSelect = document.getElementById('mec-name');
-            const redlineActionsContainer = document.getElementById('redline-actions');
-            mecNameSelect.addEventListener('change', () => {
-                calculateTotal();
-                if (mecNameSelect.value === 'Redline') {
-                    redlineActionsContainer.classList.remove('hidden');
-                } else {
-                    redlineActionsContainer.classList.add('hidden');
-                }
+        // ================== LÓGICA OFICIAIS E ACOMPANHANTES ==================
+        function adicionarPolicial() {
+            const nomeInput = document.getElementById('calc-policial-nome');
+            const idInput = document.getElementById('calc-policial-id');
+            const nome = nomeInput.value.trim().toUpperCase();
+            const id = idInput.value.trim().toUpperCase();
+
+            if(!nome || !id) return;
+            oficiaisEnvolvidos.push({ nome, id });
+            nomeInput.value = '';
+            idInput.value = '';
+            renderPoliciais();
+        }
+
+        function removerPolicial(index) {
+            oficiaisEnvolvidos.splice(index, 1);
+            renderPoliciais();
+        }
+
+        function renderPoliciais() {
+            const container = document.getElementById('lista-policiais');
+            container.innerHTML = '';
+            oficiaisEnvolvidos.forEach((oficial, i) => {
+                const badge = document.createElement('div');
+                badge.className = "flex items-center gap-2 bg-indigo-900/40 border border-indigo-500/30 text-indigo-200 px-3 py-1 rounded-full text-xs font-semibold tracking-wide";
+                badge.innerHTML = `
+                    <i class="fa-solid fa-shield-halved"></i> ${oficial.nome} (${oficial.id})
+                    <button onclick="removerPolicial(${i})" class="ml-1 text-red-400 hover:text-red-300"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                container.appendChild(badge);
             });
-            
-            document.getElementById('partner-check').addEventListener('change', () => {
-                document.getElementById('partner-name').classList.toggle('hidden', !document.getElementById('partner-check').checked);
+        }
+
+        function adicionarAcompanhante() {
+            const nomeInput = document.getElementById('calc-acomp-nome');
+            const idInput = document.getElementById('calc-acomp-id');
+            const nome = nomeInput.value.trim().toUpperCase();
+            const id = idInput.value.trim().toUpperCase();
+
+            if(!nome || !id) return;
+            acompanhantesEnvolvidos.push({ nome, id });
+            nomeInput.value = '';
+            idInput.value = '';
+            renderAcompanhantes();
+        }
+
+        function removerAcompanhante(index) {
+            acompanhantesEnvolvidos.splice(index, 1);
+            renderAcompanhantes();
+        }
+
+        function renderAcompanhantes() {
+            const container = document.getElementById('lista-acompanhantes');
+            container.innerHTML = '';
+            acompanhantesEnvolvidos.forEach((acomp, i) => {
+                const badge = document.createElement('div');
+                badge.className = "flex items-center gap-2 bg-slate-700/60 border border-slate-500/50 text-slate-200 px-3 py-1 rounded-full text-xs font-semibold tracking-wide";
+                badge.innerHTML = `
+                    <i class="fa-solid fa-user-graduate"></i> ${acomp.nome} (${acomp.id})
+                    <button onclick="removerAcompanhante(${i})" class="ml-1 text-red-400 hover:text-red-300"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                container.appendChild(badge);
             });
+        }
 
-            document.getElementById('generate-summary').addEventListener('click', () => {
-                const isPartner = document.getElementById('partner-check').checked;
-                const mechanicName = document.getElementById('mechanic-name-input').value || '[Não informado]';
-                const workshopName = document.getElementById('mec-name').value || '[Não informada]';
-                const clientId = document.getElementById('client-id').value || '[Não informado]';
-                const partnerName = document.getElementById('partner-name').value;
-                const totalText = formatCurrency(currentTotal); // Usa o valor numérico armazenado
-                
-                let servicesText = '';
-                
-                document.querySelectorAll('.service-item:checked:not(:disabled), .service-item:not(input)[value]:not([value="0"]):not(:disabled)').forEach(item => {
-                    const service = allServices.find(s => s.id === item.dataset.id);
-                    if (service) {
-                        let price = 0;
-                        let serviceName = service.name;
-                        if (item.tagName === 'SELECT') {
-                            price = parseFloat(item.value);
-                            serviceName = `${service.name} (${item.options[item.selectedIndex].text.split(' - ')[0]})`;
-                        } else {
-                            price = service.price;
-                        }
+        // ================== LÓGICA MDT UPLOAD ==================
+        const dropzone = document.getElementById('mdt-dropzone');
+        const fileInput = document.getElementById('mdt-file-input');
+        const imgPreview = document.getElementById('mdt-preview');
+        const placeholder = document.getElementById('mdt-placeholder');
+        const btnRemoveImg = document.getElementById('mdt-remove');
 
-                        if (isPartner) {
-                            if (service.partnerPrice) price = service.partnerPrice;
-                            else if (service.discount) price *= 0.90;
-                        }
-                        servicesText += `- ${serviceName}: ${formatCurrency(price)}\n`;
-                    }
-                });
+        function processarImagem(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            mdtImageFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgPreview.src = e.target.result;
+                imgPreview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                btnRemoveImg.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
 
-                const otherAestheticsCount = parseInt(document.getElementById('other-aesthetics-count').value) || 0;
-                if (otherAestheticsCount > 0) {
-                    let otherPrice = otherAestheticsCount * 10000;
-                    if (isPartner) otherPrice *= 0.90;
-                    servicesText += `- Estéticas não listadas (${otherAestheticsCount}x): ${formatCurrency(otherPrice)}\n`;
-                }
-
-                if (!servicesText) servicesText = 'Nenhum serviço selecionado.\n';
-
-                const timestamp = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' });
-
-                let mechanicShareText = '';
-                if (workshopName === 'Redline' || workshopName === 'Paleto Customs') {
-                    const mechanicShare = currentTotal * 0.20;
-                    mechanicShareText = `📥 **VALOR P/ MECÂNICA:** ${formatCurrency(mechanicShare)} (20%)\n`;
-                }
-
-                let summary = `**ORDEM DE SERVIÇO**\n\n` +
-                    `🧑‍🔧 **Mecânico:** ${mechanicName}\n` +
-                    `🏢 **Oficina:** ${workshopName}\n` +
-                    `🆔 **Passaporte:** ${clientId}\n` +
-                    `--------------------------------\n` +
-                    `**SERVIÇOS REALIZADOS:**\n${servicesText}` +
-                    `--------------------------------\n`;
-                if (isPartner) summary += `✅ **Desconto de Parceiro aplicado!** (Parceria: ${partnerName || 'Não informada'})\n\n`;
-                
-                summary += mechanicShareText;
-                summary += `💰 **TOTAL CLIENTE:** ${totalText}\n\n*Gerado em: ${timestamp}*`;
-                document.getElementById('summary-output').value = summary;
-            });
-
-            document.getElementById('copy-summary').addEventListener('click', () => {
-                const summaryText = document.getElementById('summary-output');
-                if(!summaryText.value) return;
-                summaryText.select();
-                try {
-                    document.execCommand('copy');
-                    const feedback = document.getElementById('copy-feedback');
-                    feedback.style.opacity = '1';
-                    setTimeout(() => { 
-                        feedback.style.opacity = '0'; 
-                        resetCalculator();
-                    }, 2000);
-                } catch (err) { console.error('Falha ao copiar texto: ', err); }
-            });
-
-            // --- NOVA LÓGICA DO WEBHOOK ---
-            const sendButton = document.getElementById('send-to-discord');
-            const sendFeedback = document.getElementById('send-feedback');
-
-            sendButton.addEventListener('click', async () => {
-                const mechanicName = document.getElementById('mechanic-name-input').value;
-                const clientId = document.getElementById('client-id').value;
-
-                // Validação simples
-                if (!mechanicName || !clientId || currentTotal === 0) {
-                    sendFeedback.textContent = 'Preencha Nome, ID e selecione serviços!';
-                    sendFeedback.className = 'text-center mt-2 opacity-0 transition-opacity text-red-400';
-                    sendFeedback.style.opacity = '1';
-                    setTimeout(() => { sendFeedback.style.opacity = '0'; }, 3000);
-                    return;
-                }
-
-                sendButton.disabled = true;
-                sendButton.textContent = 'Enviando...';
-                
-                // Coleta de dados
-                const isPartner = document.getElementById('partner-check').checked;
-                const partnerName = document.getElementById('partner-name').value;
-                const totalFormatted = formatCurrency(currentTotal);
-                const mechanicShare = currentTotal * 0.20;
-                const mechanicShareFormatted = formatCurrency(mechanicShare);
-                
-                let servicesList = [];
-                document.querySelectorAll('.service-item:checked:not(:disabled), .service-item:not(input)[value]:not([value="0"]):not(:disabled)').forEach(item => {
-                    const service = allServices.find(s => s.id === item.dataset.id);
-                    if (service) {
-                        let serviceName = service.name;
-                        if (item.tagName === 'SELECT') {
-                            serviceName = `${service.name} (${item.options[item.selectedIndex].text.split(' - ')[0]})`;
-                        }
-                        servicesList.push(serviceName);
-                    }
-                });
-                const otherAestheticsCount = parseInt(document.getElementById('other-aesthetics-count').value) || 0;
-                if (otherAestheticsCount > 0) {
-                    servicesList.push(`Estéticas não listadas (${otherAestheticsCount}x)`);
-                }
-                const servicesString = servicesList.length > 0 ? '• ' + servicesList.join('\n• ') : 'Nenhum serviço selecionado.';
-
-                // Monta o payload do Discord Embed
-                const payload = {
-                    username: "Leste Mecânicas - Redline",
-                    avatar_url: "https://i.imgur.com/9Go4zCY.png",
-                    embeds: [{
-                        title: "📄 Nova Ordem de Serviço",
-                        color: 3798804, // Cor #39FF14 em decimal
-                        thumbnail: { url: "https://i.imgur.com/9Go4zCY.png" },
-                        fields: [
-                            { name: "🧑‍🔧 Mecânico Responsável", value: mechanicName, inline: true },
-                            { name: "🆔 Passaporte do Cliente", value: clientId, inline: true },
-                            { name: "🛠️ Serviços Realizados", value: "```" + servicesString + "```", inline: false },
-                            { name: "📥 Valor para a Mecânica", value: `**${mechanicShareFormatted}**`, inline: true },
-                            { name: "💰 Total Cobrado do Cliente", value: `**${totalFormatted}**`, inline: true }
-                        ],
-                        footer: { text: `Gerado em: ${new Date().toLocaleString('pt-BR')}` }
-                    }]
-                };
-                
-                if (isPartner) {
-                    payload.embeds[0].fields.splice(2, 0, {
-                        name: "✅ Parceria",
-                        value: partnerName || 'Não informada',
-                        inline: false
-                    });
-                    payload.embeds[0].description = "Desconto de parceiro aplicado!";
-                }
-
-                // Envia para o Webhook
-                try {
-                    const response = await fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.ok) {
-                        sendFeedback.textContent = 'Enviado com sucesso para a Redline!';
-                        sendFeedback.className = 'text-center mt-2 opacity-0 transition-opacity text-green-400';
-                        sendFeedback.style.opacity = '1';
-                        setTimeout(() => { 
-                            sendFeedback.style.opacity = '0'; 
-                            resetCalculator();
-                        }, 2500);
-                    } else {
-                        throw new Error(`Erro do servidor: ${response.status}`);
-                    }
-                } catch (error) {
-                    console.error('Falha ao enviar para o Discord:', error);
-                    sendFeedback.textContent = 'Erro ao enviar. Tente novamente.';
-                    sendFeedback.className = 'text-center mt-2 opacity-0 transition-opacity text-red-400';
-                    sendFeedback.style.opacity = '1';
-                    setTimeout(() => { sendFeedback.style.opacity = '0'; }, 3000);
-                } finally {
-                    sendButton.disabled = false;
-                    sendButton.textContent = 'Enviar para Redline';
-                }
-            });
+        dropzone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => processarImagem(e.target.files[0]));
+        
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if(e.dataTransfer.files.length) processarImagem(e.dataTransfer.files[0]);
         });
+
+        document.addEventListener('paste', (e) => {
+            // Apenas intercepta se estiver na aba da calculadora
+            if(document.getElementById('view-calc').classList.contains('hidden')) return;
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.type.indexOf('image') === 0) {
+                    processarImagem(item.getAsFile());
+                    break;
+                }
+            }
+        });
+
+        btnRemoveImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mdtImageFile = null;
+            imgPreview.src = '';
+            imgPreview.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+            btnRemoveImg.classList.add('hidden');
+            fileInput.value = '';
+        });
+
+        // ================== AÇÕES CALCULADORA ==================
+        function gerarResumoTexto() {
+            let infrator = document.getElementById('calc-infrator-nome').value.trim().toUpperCase() || "NÃO INFORMADO";
+            let descricao = document.getElementById('calc-descricao').value.trim() || "Nenhuma";
+            let policiais = oficiaisEnvolvidos.map(o => `${o.nome} (${o.id})`).join(", ") || "Nenhum informado";
+            
+            let txtCrimes = selectedCrimesForCalc.map(c => `- ${c.crime}`).join("\n");
+            
+            let advogadoNome = document.getElementById('calc-advogado-nome').value.trim().toUpperCase();
+            let advogadoId = document.getElementById('calc-advogado-id').value.trim().toUpperCase();
+            let advStr = (advogadoNome || advogadoId) ? `${advogadoNome} (ID/OAB: ${advogadoId})` : "Não informado";
+            
+            let acompanhantes = acompanhantesEnvolvidos.map(a => `${a.nome} (${a.id})`).join(", ") || "Nenhum";
+            
+            let reducoesAtivas = [];
+            if(document.getElementById('red-advogado').checked) reducoesAtivas.push(`Advogado Constituído: sim`);
+            if(document.getElementById('red-primario').checked) reducoesAtivas.push("Réu Primário (-20%)");
+            if(document.getElementById('red-confesso').checked) reducoesAtivas.push("Réu Confesso (-20%)");
+            if(document.getElementById('red-fianca').checked) reducoesAtivas.push("Fiança Paga (-100%)");
+
+            let totalMulta = formatBRL(selectedCrimesForCalc.reduce((acc, c) => acc + c.multa, 0));
+            let finalMeses = document.getElementById('calc-valor-pena').innerText;
+
+            return `RESUMO PENAL\n\nInfrator: ${infrator}\nOficiais: ${policiais}\n\nAdvogado Constituído: ${document.getElementById('red-advogado').checked ? advStr : 'Não'}\nAcompanhantes: ${acompanhantes}\n\nCrimes:\n${txtCrimes}\n\nReduções: ${reducoesAtivas.length ? reducoesAtivas.join(" | ") : "Nenhuma"}\nMulta: ${totalMulta}\nPena Final: ${finalMeses}\n\nDescrição:\n${descricao}`;
+        }
+
+        function copiarResumoCalc() {
+            const texto = gerarResumoTexto();
+            navigator.clipboard.writeText(texto).then(() => {
+                const btn = document.getElementById('btn-copiar-calc');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIADO!';
+                btn.classList.replace('bg-slate-700', 'bg-green-600');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('bg-green-600', 'bg-slate-700');
+                }, 2000);
+            });
+        }
+
+        async function enviarDiscordCalc() {
+            const btn = document.getElementById('btn-discord-calc');
+            const webhookUrl = "https://discord.com/api/webhooks/1493576226017906830/aS1MOmJQ4AuglxOhYMlhGR0a-0KS-OIMdWW5QMBbdPlSxZLyenJeWk59dk1ltCxrqg-o";
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-xl"></i> ENVIANDO RELATÓRIO...';
+            btn.disabled = true;
+
+            let infrator = document.getElementById('calc-infrator-nome').value.trim().toUpperCase() || "NÃO INFORMADO";
+            let descricao = document.getElementById('calc-descricao').value.trim() || "Nenhuma descrição fornecida.";
+            let policiaisStr = oficiaisEnvolvidos.map(o => `${o.nome} (${o.id})`).join(", ") || "Nenhum oficial anexado.";
+            let crimesStr = selectedCrimesForCalc.map(c => `• ${c.crime}`).join("\n");
+            
+            let advogadoNome = document.getElementById('calc-advogado-nome').value.trim().toUpperCase();
+            let advogadoId = document.getElementById('calc-advogado-id').value.trim().toUpperCase();
+            
+            let advStr = "Defensoria Pública / Não Constituído";
+            if (document.getElementById('red-advogado').checked) {
+                advStr = (advogadoNome || advogadoId) ? `${advogadoNome} (OAB/ID: ${advogadoId})` : "Constituído (Nome não preenchido)";
+            }
+
+            let acompStr = acompanhantesEnvolvidos.map(a => `${a.nome} (${a.id})`).join(", ") || "Nenhum";
+            
+            let reducoesAtivas = [];
+            if(document.getElementById('red-primario').checked) reducoesAtivas.push("Réu Primário (-20%)");
+            if(document.getElementById('red-confesso').checked) reducoesAtivas.push("Réu Confesso (-20%)");
+            if(document.getElementById('red-fianca').checked) reducoesAtivas.push("Fiança Paga (-100%)");
+
+            let multa = document.getElementById('calc-valor-multa').innerText;
+            let penaFinal = document.getElementById('calc-valor-pena').innerText;
+
+            // Layout Embed Clean & Profissional
+            const embed = {
+                title: "📄 Relatório de Apreensão e Penalidade",
+                color: 13346929,
+                description: `**Infrator:** ${infrator}\n\n**Ocorrência:**\n\`\`\`${descricao}\`\`\``,
+                fields: [
+                    { name: "👮 Equipe Policial", value: policiaisStr, inline: false },
+                    { name: "⚖️ Representação Legal", value: `**Advogado:** ${advStr}\n**Estagiários/Acompanhantes:** ${acompStr}`, inline: false },
+                    { name: "🚨 Infrações Constatadas", value: crimesStr || "Nenhum crime listado.", inline: false },
+                    { name: "📉 Benefícios e Atenuantes", value: reducoesAtivas.length ? reducoesAtivas.join(" • ") : "Sem atenuantes.", inline: false },
+                    { name: "💰 Multa Aplicada", value: `\`${multa}\``, inline: true },
+                    { name: "⏱️ Pena de Reclusão", value: `\`${penaFinal}\``, inline: true }
+                ],
+                footer: { text: `Tribunal de Justiça - Sistema MDT`, icon_url: "https://i.imgur.com/DPg5b1B.png" },
+                timestamp: new Date().toISOString()
+            };
+
+            const formData = new FormData();
+            
+            if(mdtImageFile) {
+                embed.image = { url: "attachment://mdt_image.jpg" };
+                formData.append('file', mdtImageFile, "mdt_image.jpg");
+            }
+
+            formData.append('payload_json', JSON.stringify({
+                username: "Poder Judiciário",
+                avatar_url: "https://i.imgur.com/DPg5b1B.png",
+                embeds: [embed]
+            }));
+
+            try {
+                const response = await fetch(webhookUrl, { method: 'POST', body: formData });
+                if (response.ok) {
+                    btn.innerHTML = '<i class="fa-solid fa-check text-xl"></i> RELATÓRIO ENVIADO';
+                    btn.classList.replace('bg-[#5865F2]', 'bg-green-600');
+                } else throw new Error();
+            } catch (error) {
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xl"></i> ERRO AO ENVIAR';
+                btn.classList.replace('bg-[#5865F2]', 'bg-red-600');
+            } finally {
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('bg-green-600', 'bg-red-600');
+                    btn.classList.add('bg-[#5865F2]');
+                    btn.disabled = false;
+                }, 4000);
+            }
+        }
+
+        // ==================== INICIALIZAÇÃO ====================
+        function aceitarCookies() {
+            localStorage.setItem('rp_juridico_cookies_accepted', 'true');
+            document.getElementById('cookie-banner').classList.add('translate-y-full');
+        }
+
+        window.onload = () => {
+            const loader = document.getElementById('loading-screen');
+            const banner = document.getElementById('cookie-banner');
+            if (!localStorage.getItem('rp_juridico_visited')) {
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        localStorage.setItem('rp_juridico_visited', 'true');
+                        if (!localStorage.getItem('rp_juridico_cookies_accepted')) setTimeout(() => banner.classList.remove('translate-y-full'), 1000);
+                    }, 1000); 
+                }, 2000);
+            } else {
+                loader.style.display = 'none';
+                if (!localStorage.getItem('rp_juridico_cookies_accepted')) setTimeout(() => banner.classList.remove('translate-y-full'), 1000);
+            }
+
+            const hoje = new Date();
+            const dataStr = `Brasil, ${hoje.getDate().toString().padStart(2, '0')}/${(hoje.getMonth()+1).toString().padStart(2, '0')}/${hoje.getFullYear()}`;
+            document.getElementById('input-rep-data').value = dataStr;
+            document.getElementById('doc-carimbo-data').innerText = `${hoje.getDate().toString().padStart(2, '0')}/${(hoje.getMonth()+1).toString().padStart(2, '0')}/${hoje.getFullYear()}`;
+
+            gerarCNPJ();
+            ajustarEscala('preview-area', 'documento-pdf');
+            
+            updatePorteDoc();
+            ajustarEscala('preview-area-porte', 'documento-pdf-porte');
+            
+            renderCrimes();
+            updateCalculadoraUI();
+        };
+        
+        window.onresize = () => {
+            ajustarEscala('preview-area', 'documento-pdf');
+            ajustarEscala('preview-area-porte', 'documento-pdf-porte');
+        };
     </script>
 </body>
 </html>
